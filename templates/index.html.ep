@@ -1,0 +1,12 @@
+<html>
+<head>
+</head>
+<body>
+<h1> login or hi or something </h1> 
+<form action="/login">
+<input name="username"></input>
+<input name="password"></input>
+<button click="submit">submit</button>
+</form>
+</body>
+</html>

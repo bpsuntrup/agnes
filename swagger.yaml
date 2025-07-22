@@ -1,0 +1,550 @@
+openapi: 3.0.3
+info:
+  title: Agnes API
+  version: 1.0.0
+  description: API for managing users, messages, spaces, attachments, and reports.
+
+servers:
+  - url: /api/v1
+
+paths:
+  /spaces:
+    get:
+      summary: List all spaces (public and private)
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          description: Filter spaces by criteria (e.g., public/private)
+      responses:
+        '200':
+          description: A list of spaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Space'
+    post:
+      summary: Create a new space
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceCreate'
+      responses:
+        '201':
+          description: Space created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+
+  /spaces/{spaceId}:
+    get:
+      summary: Get a single space by ID
+      parameters:
+        - $ref: '#/components/parameters/spaceId'
+      responses:
+        '200':
+          description: A space object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '404':
+          description: Space not found
+    put:
+      summary: Update a space
+      parameters:
+        - $ref: '#/components/parameters/spaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceUpdate'
+      responses:
+        '200':
+          description: Updated space
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+    delete:
+      summary: Delete a space
+      parameters:
+        - $ref: '#/components/parameters/spaceId'
+      responses:
+        '204':
+          description: Space deleted
+
+  /spaces/{spaceId}/messages:
+    get:
+      summary: Get messages in a specific space
+      parameters:
+        - $ref: '#/components/parameters/spaceId'
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number for pagination
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+          description: Number of messages per page
+      responses:
+        '200':
+          description: List of messages in the space
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+    post:
+      summary: Send a message to a space
+      parameters:
+        - $ref: '#/components/parameters/spaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageCreate'
+      responses:
+        '201':
+          description: Message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /messages:
+    get:
+      summary: List all messages visible to the user
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          description: Filter messages by public/private
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number for pagination
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+          description: Number of messages per page
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+
+  /messages/{messageId}:
+    get:
+      summary: Get a specific message by ID
+      parameters:
+        - $ref: '#/components/parameters/messageId'
+      responses:
+        '200':
+          description: A message object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Message not found
+    put:
+      summary: Edit a message
+      parameters:
+        - $ref: '#/components/parameters/messageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageUpdate'
+      responses:
+        '200':
+          description: Updated message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /messages/{messageId}/reactions:
+    post:
+      summary: Add a reaction to a message
+      parameters:
+        - $ref: '#/components/parameters/messageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reaction:
+                  type: string
+                  description: Reaction emoji or text
+              required:
+                - reaction
+      responses:
+        '201':
+          description: Reaction added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reaction:
+                    type: string
+
+  /users:
+    get:
+      summary: Paginated list of users or search users
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    put:
+      summary: Update user
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete user
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '204':
+          description: User deleted
+
+  /users/{userId}/messages:
+    get:
+      summary: Get messages for a user
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of user's messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+
+  /spaces/{spaceId}/users:
+    get:
+      summary: List users in a space
+      parameters:
+        - $ref: '#/components/parameters/spaceId'
+      responses:
+        '200':
+          description: List of users in the space
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /attachments/{attachmentId}:
+    get:
+      summary: Get attachment by ID
+      parameters:
+        - $ref: '#/components/parameters/attachmentId'
+      responses:
+        '200':
+          description: Attachment content (file)
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+    post:
+      summary: Upload or update an attachment
+      parameters:
+        - $ref: '#/components/parameters/attachmentId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Attachment created/updated
+    delete:
+      summary: Delete an attachment
+      parameters:
+        - $ref: '#/components/parameters/attachmentId'
+      responses:
+        '204':
+          description: Attachment deleted
+
+  /reports:
+    post:
+      summary: Create a report for message or conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_type:
+                  type: string
+                  enum: [message, conversation]
+                target_id:
+                  type: string
+                reason:
+                  type: string
+              required:
+                - target_type
+                - target_id
+                - reason
+      responses:
+        '201':
+          description: Report created
+
+components:
+  parameters:
+    spaceId:
+      name: spaceId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Space unique identifier
+    messageId:
+      name: messageId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Message unique identifier
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: User unique identifier
+    attachmentId:
+      name: attachmentId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Attachment unique identifier
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        username:
+          type: string
+        displayname:
+          type: string
+        email:
+          type: string
+          format: email
+        user_type:
+          type: integer
+      required: [id, username, displayname, email]
+
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        displayname:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+        user_type:
+          type: integer
+      required: [username, password, displayname, email]
+
+    UserUpdate:
+      type: object
+      properties:
+        password:
+          type: string
+        displayname:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+        user_type:
+          type: integer
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Message ID
+        user_id:
+          type: string
+        space_id:
+          type: string
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required: [id, user_id, space_id, content, created_at]
+
+    MessageCreate:
+      type: object
+      properties:
+        content:
+          type: string
+      required: [content]
+
+    MessageUpdate:
+      type: object
+      properties:
+        content:
+          type: string
+      required: [content]
+
+    Space:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        public:
+          type: boolean
+      required: [id, name, public]
+
+    SpaceCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        public:
+          type: boolean
+      required: [name, public]
+
+    SpaceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        public:
+          type: boolean
+
+

@@ -1,0 +1,80 @@
+roles:
+* create
+	* must be admin
+	* must be logged in
+	* must include valid permissions
+* read
+	* must have admin to see all
+	* must be logged in
+	* may see your own if not admin
+* update
+	* must be admin
+	* must be logged in
+	* must include valid permissions
+* delete
+	* must be admin
+	* must be logged in
+
+attributes:
+* create
+	* must be admin
+	* must be logged in
+	* must have valid types (date, enum, text, etc)
+* read
+	* must be logged in
+* update
+	* must be admin
+	* must be logged in
+* delete
+	* must be admin
+	* must be logged in
+
+user_types:
+* create
+	* must have admin
+	* must be logged in
+* read
+	* must be logged in
+* update
+	* add or remove attributes
+	* must be admin
+	* must be logged in
+* delete
+	* must be admin
+	* must be logged in
+
+users:
+* create users
+	* guarded by user_create role
+		* errors when user without user_create or admin does it
+	* must require required attributes
+		* errors when not all required attributes are provided
+	* must reject when invalid attributes
+		* invalid, because not on type
+		* invalid, because wrong type
+	* must be logged in
+* read users
+	* search for users by attribute
+	* must be logged in
+* delete users
+	* must be logged in
+	* must have admin or user_delete role
+		* errors when not
+	* must delete all user_attributes too
+	* user must be left in system with only username and null password, and "deleted" user type
+* update users
+	* must be logged in
+	* must require required attributes
+		* cannot set required attribute to empty
+	* must reject when invalid attributes
+		* invalid, because not on type
+		* invalid, because wrong type
+
+spaces
+...
+
+posts
+...
+
+files
+...
