@@ -1,4 +1,4 @@
-package Tests::App::Agnes;
+package Tests::App::Agnes::Controller::User;
 
 use strict;
 use warnings;
@@ -13,6 +13,9 @@ use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
 
+# TODO: these startup, shutdown, setup, teardown methods are copied from Tests::App::Agnes,
+# and should really be put in a base class
+###########################################################################################
 sub set_up_db : Test(startup) {
     # Create database:
     my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
@@ -57,35 +60,44 @@ sub teardown : Test(teardown) {
     Model->schema->storage->txn_rollback;
     Model->schema->storage->disconnect;
 }
+###########################################################################################
 
-sub db_is_set_up :Tests {
-    my $dbh = DBI->connect("dbi:Pg:dbname=agnes_test");
-    my $users = $dbh->selectall_arrayref("select * from users");
-    is (scalar @$users, 3, "got 3 users as expected");
 
-    $dbh->disconnect;
+sub get_users :Tests {
+    my $t = Test::Mojo->new('App::Agnes');
+    $t->app->log->level('fatal');
+    $t->get_ok('/users')->status_is(401, "Sad path get users");
+    $t->post_ok('/login' => form => {
+        username => "mary",
+        password => "pass1",
+    })->status_is(302)
+      ->header_like('Set-Cookie' => qr/mojolicious=/, 'got session cookie');
+    $t->get_ok('/users')->status_is(200)
+                        ->json_has('/data/0/username', 'can get a username');
 }
 
-sub can_get_user :Tests {
-    my $schema = Model->schema;
-    my $user = $schema->resultset('User')->search({
-        username => 'mary',
+sub create_user : Tests {
+    my $t = Test::Mojo->new('App::Agnes');
+    $t->app->log->level('error');
+    $t->post_ok("/users" => json => {
+        user => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            user_type_id   => 1,
+        },
+    })->status_is(200, "Able to create user with POST /users");
+
+    my $user = Model->schema->resultset('User')->search({
+        username => 'mildred',
     })->first;
-    is($user->password, 'pass1', 'can get individual user from search');
 
-    my @users = $schema->resultset('User')->all;
-    is(scalar @users, 3, "Got 3 users");
-    is($users[0]->username, 'mary', "First user is correctly named");
+    is($user->displayname, 'Mildred Suntrup', "Able to get user out of database");
+    isnt($user->password, 'millypass1', "Passwords should not be stored in clear text");
 }
 
-sub test_config :Tests {
-    my $conf = App::Agnes::Config->new;
-    is($conf->{saint}, "agnes", "Can read config");
-    $conf->{saint} = 'winifred';
-    my $conf2 = App::Agnes::Config->new;
-    is($conf2->{saint}, "winifred", "Can change config");
-    like([$conf2->{db_conn}->()]->[0], qr/agnes_test/, "I have the correct db connection config");
-}
 
 
 1;
