@@ -1,18 +1,14 @@
-package Tests::App::Agnes;
+package Tests::Utils::CommonBase;
 
 use strict;
 use warnings;
 
 use Tests::Utils::TestData;
 
-
-use base 'Tests::Utils::CommonBase';
-use Test::More;
-use Test::Mojo;
+use base qw(Test::Class);
 use DBI;
 use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
-use Mojo::JSON qw/to_json/;
 
 sub set_up_db : Test(startup) {
     # Create database:
@@ -57,35 +53,6 @@ sub setup : Test(setup) {
 sub teardown : Test(teardown) {
     Model->schema->storage->txn_rollback;
     Model->schema->storage->disconnect;
-}
-
-sub db_is_set_up :Tests {
-    my $dbh = DBI->connect("dbi:Pg:dbname=agnes_test");
-    my $users = $dbh->selectall_arrayref("select * from users");
-    is (scalar @$users, 3, "got 3 users as expected");
-
-    $dbh->disconnect;
-}
-
-sub can_get_user :Tests {
-    my $schema = Model->schema;
-    my $user = $schema->resultset('User')->search({
-        username => 'mary',
-    })->first;
-    is($user->password, 'pass1', 'can get individual user from search');
-
-    my @users = $schema->resultset('User')->all;
-    is(scalar @users, 3, "Got 3 users");
-    is($users[0]->username, 'mary', "First user is correctly named");
-}
-
-sub test_config :Tests {
-    my $conf = App::Agnes::Config->new;
-    is($conf->{saint}, "agnes", "Can read config");
-    $conf->{saint} = 'winifred';
-    my $conf2 = App::Agnes::Config->new;
-    is($conf2->{saint}, "winifred", "Can change config");
-    like([$conf2->{db_conn}->()]->[0], qr/agnes_test/, "I have the correct db connection config");
 }
 
 

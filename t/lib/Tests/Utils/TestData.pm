@@ -1,4 +1,4 @@
-package Tests::TestData;
+package Tests::Utils::TestData;
 
 =pod
 
@@ -34,7 +34,7 @@ sub add_test_users {
         ( 'john', 'pass3', 3)
     ");
     $self->{dbh}->do(q{
-        INSERT INTO user_attribute_types
+        INSERT INTO attributes
         (name, type)
         VALUES
         ('reception_date', 'date'),

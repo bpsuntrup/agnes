@@ -3,65 +3,16 @@ package Tests::App::Agnes::Controller::User;
 use strict;
 use warnings;
 
-use Tests::TestData;
 
-use base qw(Test::Class);
+use Tests::Utils::TestData;
+
+use base 'Tests::Utils::CommonBase';
 use Test::More;
 use Test::Mojo;
 use DBI;
 use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
-
-# TODO: these startup, shutdown, setup, teardown methods are copied from Tests::App::Agnes,
-# and should really be put in a base class
-###########################################################################################
-sub set_up_db : Test(startup) {
-    # Create database:
-    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
-    $dbh->do("CREATE DATABASE agnes_test");
-    $dbh->disconnect;
-
-    # Load in schema:
-    my $src_db = 'agnes'; # TODO: copy from dev env
-    my $dest_db = 'agnes_test'; # TODO: make multiple names possible to run ast
-    my $schema_dump = `pg_dump --schema-only $src_db`;
-    die "pg_dump failed" unless $schema_dump;
-    open my $psql, "|-", "psql -q $dest_db" or die "psql failed :$!";
-    print $psql $schema_dump;
-    close $psql or die "Error loading schema into $dest_db";
-
-    # Load in test data:
-    $dbh = DBI->connect("dbi:Pg:dbname=agnes_test"); # TODO: set up test_runner user
-    my $td = Tests::TestData->new($dbh);
-    $td->add_test_users();
-    $dbh->disconnect;
-
-    # Point config to new db
-    App::Agnes::Config->new->{db_conn} = sub {
-        return "dbi:Pg:dbname=agnes_test";
-    };
-    Model->reconnect;
-}
-
-sub tear_down_db : Test(shutdown) {
-    Model->schema->storage->disconnect;
-    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
-    $dbh->do("DROP DATABASE agnes_test");
-    $dbh->disconnect;
-}
-
-# wrap each test in a txn
-sub setup : Test(setup) {
-    Model->schema->storage->txn_begin;
-}
-
-sub teardown : Test(teardown) {
-    Model->schema->storage->txn_rollback;
-    Model->schema->storage->disconnect;
-}
-###########################################################################################
-
 
 sub get_users :Tests {
     my $t = Test::Mojo->new('App::Agnes');
@@ -98,6 +49,31 @@ sub create_user : Tests {
     isnt($user->password, 'millypass1', "Passwords should not be stored in clear text");
 }
 
+# * create users
+# 	* guarded by user_create role
+# 		* errors when user without user_create or admin does it
+# 	* must require required attributes
+# 		* errors when not all required attributes are provided
+# 	* must reject when invalid attributes
+# 		* invalid, because not on type
+# 		* invalid, because wrong type
+# 	* must be logged in
+# * read users
+# 	* search for users by attribute
+# 	* must be logged in
+# * delete users
+# 	* must be logged in
+# 	* must have admin or user_delete role
+# 		* errors when not
+# 	* must delete all user_attributes too
+# 	* user must be left in system with only username and null password, and "deleted" user type
+# * update users
+# 	* must be logged in
+# 	* must require required attributes
+# 		* cannot set required attribute to empty
+# 	* must reject when invalid attributes
+# 		* invalid, because not on type
+# 		* invalid, because wrong type
 
 
 1;
