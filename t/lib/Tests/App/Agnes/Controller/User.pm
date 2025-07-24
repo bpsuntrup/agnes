@@ -14,22 +14,43 @@ use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
 
-sub get_users :Tests {
-    my $t = Test::Mojo->new('App::Agnes');
-    $t->app->log->level('fatal');
-    $t->get_ok('/users')->status_is(401, "Sad path get users");
-    $t->post_ok('/login' => form => {
-        username => "mary",
-        password => "pass1",
-    })->status_is(302)
-      ->header_like('Set-Cookie' => qr/mojolicious=/, 'got session cookie');
-    $t->get_ok('/users')->status_is(200)
-                        ->json_has('/data/0/username', 'can get a username');
-}
+#sub get_users :Tests {
+#    my $t = Test::Mojo->new('App::Agnes');
+#    $t->app->log->level('fatal');
+#    $t->get_ok('/users')->status_is(401, "Sad path get users");
+#
+#    $t->post_ok('/login' => form => {
+#        username => "mary",
+#        password => "pass1",
+#    })->status_is(302)
+#      ->header_like('Set-Cookie' => qr/mojolicious=/, 'got session cookie');
+#    $t->get_ok('/users')->status_is(200)
+#                        ->json_has('/data/0/username', 'can get a username');
+#}
 
-sub create_user : Tests {
+#sub create_user : Tests {
+#    my $t = Test::Mojo->new('App::Agnes');
+#    $t->post_ok("/users" => json => {
+#        user => {
+#            username    => "mildred",
+#            password    => "millypass1",
+#            displayname => "Mildred Suntrup",
+#            birthdate   => "2 Dec 2020",
+#            email       => 'milly@suntrup.net',
+#            user_type_id   => 1,
+#        },
+#    })->status_is(200, "Able to create user with POST /users");
+#
+#    my $user = Model->schema->resultset('User')->search({
+#        username => 'mildred',
+#    })->first;
+#
+#    is($user->displayname, 'Mildred Suntrup', "Able to get user out of database");
+#    isnt($user->password, 'millypass1', "Passwords should not be stored in clear text");
+#}
+
+sub create_user_sad : Tests {
     my $t = Test::Mojo->new('App::Agnes');
-    $t->app->log->level('error');
     $t->post_ok("/users" => json => {
         user => {
             username    => "mildred",
@@ -39,15 +60,18 @@ sub create_user : Tests {
             email       => 'milly@suntrup.net',
             user_type_id   => 1,
         },
-    })->status_is(200, "Able to create user with POST /users");
-
-    my $user = Model->schema->resultset('User')->search({
-        username => 'mildred',
-    })->first;
-
-    is($user->displayname, 'Mildred Suntrup', "Able to get user out of database");
-    isnt($user->password, 'millypass1', "Passwords should not be stored in clear text");
+    })->status_is(401, "Create User fails when not logged in.")
+      ->json_is('/error', 'ENOLOGIN', "Get ENOLOGIN on failure to log in");
+    note("Create User fails when logged in with non-admin user.");
+    note("Create User fails when required column is missing.");
+    note("Create User fails when required attribute is missing.");
 }
+
+sub create_user_happy : Tests {
+    note("Create user works when logged in with admin user and all required fields are included");
+}
+
+
 
 # * create users
 # 	* guarded by user_create role

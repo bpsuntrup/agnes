@@ -26,6 +26,7 @@ sub get_users {
 
 # POST /users
 sub create_user {
+    die ("Should not get here BENJAMIN");
     my $c = shift;
     my $data = $c->req->json;
     $data = $data->{user};

@@ -27,11 +27,11 @@ sub add_test_users {
     ");
     $self->{dbh}->do("
         INSERT INTO users
-        ( username ,password ,user_type_id )
+        ( username ,password ,user_type_id, is_admin )
         VALUES
-        ( 'mary', 'pass1', 1),
-        ( 'joe',  'pass2', 2),
-        ( 'john', 'pass3', 3)
+        ( 'mary', 'pass1', 1, true),
+        ( 'joe',  'pass2', 2, false),
+        ( 'john', 'pass3', 3, false)
     ");
     $self->{dbh}->do(q{
         INSERT INTO attributes
@@ -41,7 +41,7 @@ sub add_test_users {
         ('marital_status', 'enum("married", "unmarried")'),
         ('christian_name', 'text')
     });
-    $self->{dbh}->do(" ");
+    #$self->{dbh}->do(" ");
 }
 
 1;
