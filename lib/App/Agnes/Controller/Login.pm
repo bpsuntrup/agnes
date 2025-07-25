@@ -7,8 +7,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use aliased 'App::Agnes::Model';
 
-# GET /login
-# if successful, gives auth cookie, redirects to /blurbs
+# POST /login
 sub login_now {
     my $self = shift;
     my $username = $self->param('username');
@@ -29,6 +28,39 @@ sub login_now {
         my $url = $self->url_for('/')->query( login_msg => 'Invalid login credentials' );
         return $self->redirect_to($url);
     }
+}
+
+# POST /api/v1/login
+# TODO: not right now. 
+sub login_api {
+    my $c = shift;
+
+    # Check JSON first
+    my $user = $c->req->json->{user};
+
+    my $auth = Model->schema->resultset('User')->authenticate(
+        username => $user->{username},
+        password => $user->{password},
+    );
+    if ($auth) {
+        $c->render();
+    }
+    else {
+        $c->render(
+            json => { 'error' => 'EINVALIDCREDS', },
+            status => 401,
+        );
+    }
+
+}
+
+# GET /login
+sub login_ok {
+    my $c = shift;
+    return $c->render(
+        text => 'OK',
+        status => 200,
+    );
 }
 
 # DELETE /login

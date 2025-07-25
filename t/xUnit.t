@@ -6,6 +6,7 @@ use lib "$Dir/lib";
 
 use Tests::App::Agnes;
 use Tests::App::Agnes::Controller::User;
+use Tests::App::Agnes::Controller::Login;
 
 
 Test::Class->runtests;

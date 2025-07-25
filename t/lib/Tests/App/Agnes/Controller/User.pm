@@ -51,6 +51,8 @@ use Mojo::JSON qw/to_json/;
 
 sub create_user_sad : Tests {
     my $t = Test::Mojo->new('App::Agnes');
+
+    note("Create user should fail when not logged in.");
     $t->post_ok("/users" => json => {
         user => {
             username    => "mildred",

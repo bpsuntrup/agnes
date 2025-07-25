@@ -60,11 +60,14 @@ sub startup {
 
     my $auth = $r->under($authenticate);
 
-    #my $apiv1 = $auth->under('/api/v1');
+    my $apiv1 = $auth->under('/api/v1');
 
     # Normal route to controller
     $r->get('/')->to('main#index');
     $r->post('/login')->to('login#login_now');
+    $r->post('/api/v1/login')->to('login#login_api');
+
+    $auth->get('/login')->to('login#login_ok');
     $auth->post('/users')->to('user#create_user');
     $auth->get('/users')->to('user#get_users');
 }
