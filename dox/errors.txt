@@ -1,0 +1,8 @@
+ENOTAUTHORIZED
+* not sufficient privileges for user to access resource
+
+EINVALIDCREDS
+* wrong username/password
+
+ENOLOGIN
+* must be logged in to access resource

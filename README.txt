@@ -13,6 +13,9 @@ carmel exec -- morbo bin/app
 Run tests:
 carmel exec -- prove -lv t/xUnit.t
 
+Validate documentation:
+* see https://github.com/APIDevTools/swagger-cli
+swagger-cli validate dox/openapi3/agnes.yaml
 
 TODO:
 * google calendar integration
@@ -30,56 +33,6 @@ TODO:
 
 The database data files are ~/pgdata, which is postgres 15. 
 
-
-/api/v1/...
-The api will be built around the following resources:
-/users
-/messages
-/spaces
-/attachments
-
-want to 
-* crud a message
-* crud a user
-* crud a space
-* crd an attachment
-
-GET /spaces
-* lists all spaces (you can see, public and private)
-* filter with query params
-
-GET /messages
-* lists all messages you can see in reverse chronological order, paged
-* filter for public or private
-
-GET /spaces/<space-id>/messages
-* get messages only for a given space
-
-POST /spaces/<space-id>/messages
-* send a message
-
-GET /users
-* paginated list of users
-
-GET /users?query="..."
-GET /users/<user-id>
-GET /users/<user-id>/messages
-GET /space/<space-id>/users
-PUT /messages/<message-id>
-* for editing a message
-
-POST /messages/<message-id>/reactions
-* adding a reaction
-
-GET/POST/DELETE /attachments/<attachment_id>
-* no method for listing all attachments
-* controlled by session cookie and permissions in attachments table (and attachment_owner_spaces)
-* only the owner can delete
-* only owner or spaces can see
-* served via fs on back end. Must be hardened to fs walking attacks. Check permissions before serving file.
-
-POST /reports
-* creates a report for a message or a conversation or something
 
 messages
 * HAS body
@@ -137,16 +90,3 @@ user_attributes
 * value
 
 user
-
-            List of relations
- Schema |     Name     | Type  |  Owner
---------+--------------+-------+----------
- public | file_spaces  | table | benjamin # galleries, i guess. I don't like this. will leave it out for now.
- public | files        | table | benjamin #restrict on mime type for now, and only allow jpg, gif
- public | member_types | table | benjamin # used by space memberships to distinguish between admin and member (could probably be a bool)
- public | space_users  | table | benjamin # space memberships
- public | attachments  | table | benjamin # relates posts to files, main key to driving file availability
- public | user_types   | table | benjamin # priest, faithful, inquirer, etc
- public | posts        | table | benjamin \
- public | spaces       | table | benjamin  )-- the three main tables running the app
- public | users        | table | benjamin /

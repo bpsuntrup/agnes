@@ -1,0 +1,12 @@
+openapi: 3.0.3
+info:
+  title: Agnes API
+  version: 1.0.0
+  description: API for managing users, messages, spaces, attachments, and reports.
+
+servers:
+  - url: /api/v1
+
+paths:
+  /users:
+    $ref: "./users/users.yaml"

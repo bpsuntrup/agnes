@@ -8,6 +8,7 @@ requires 'File::Slurp';
 requires 'Scope::Guard';
 requires 'DBIx::Class';
 requires 'DBIx::Class::Schema::Loader';
+requires 'Mojolicious::Plugin::OpenAPI';
 
 on 'test' => sub {
   requires 'Test::More';

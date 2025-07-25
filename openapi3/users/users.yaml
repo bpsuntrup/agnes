@@ -1,0 +1,56 @@
+get:
+  summary: Paginated list of users or search users
+  parameters:
+    - in: query
+      name: query
+      schema:
+        type: string
+      description: Search query string
+    - in: query
+      name: page
+      schema:
+        type: integer
+    - in: query
+      name: per_page
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: List of users
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                      description: username of user
+
+post:
+  summary: Create a new user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+              description: username of user
+  responses:
+    '201':
+      description: User created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                description: username of user

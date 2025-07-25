@@ -15,8 +15,14 @@ sub startup {
     my $self = shift;
     my $config = App::Agnes::Config->new;
 
+    # Set up template dir
     my $template_path = File::Spec->catdir($self->home, 'templates');
     $self->renderer->paths([$template_path]);
+
+    # Set up openapi spec dir
+    my $openapi3_path = $self->home->rel_file('openapi3/agnes.yaml');
+    $self->plugin(OpenAPI => {url => $openapi3_path});
+
 
     $self->helper( db => sub {
         App::Agnes::DB->dbh;
@@ -44,9 +50,7 @@ sub startup {
 
     my $authenticate = sub {
         my $c = shift;
-        print("BENJAMIN: inside auth\n");
         return 1 if $c->session('username');
-        print("BENJAMIN: no username\n");
 
         # TODO: support bearer-token authentication as well here.
         # TODO: set up user in stash here
