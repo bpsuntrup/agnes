@@ -64,7 +64,24 @@ sub create_user_sad : Tests {
         },
     })->status_is(401, "Create User fails when not logged in.")
       ->json_is('/error', 'ENOLOGIN', "Get ENOLOGIN on failure to log in");
+
     note("Create User fails when logged in with non-admin user.");
+    $t->post_ok('/login' => form => {
+        username => "joe",
+        password => "pass2",
+    })->status_is(302);
+    $t->post_ok("/users" => json => {
+        user => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            user_type_id   => 1,
+        },
+    })->status_is(403, "Not authorized to create user with unpriveledged user")
+      ->json_is('/error', 'ENOTAUTHORIZED', "Get ENOTAUTHORIZED");
+
     note("Create User fails when required column is missing.");
     note("Create User fails when required attribute is missing.");
 }

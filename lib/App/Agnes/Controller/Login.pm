@@ -30,8 +30,23 @@ sub login_now {
     }
 }
 
-# POST /api/v1/login
 # TODO: not right now. 
+# POST /api/v1/login
+# {
+#    "user": {
+#       "username": "alice",
+#       "password": "secret"
+#   }
+# }
+# 
+# HTTP/1.1 200 OK
+# Content-Type: application/json
+# 
+# {
+#   "access_token": "abc123tokenvalue",
+#   "token_type": "Bearer",
+#   "expires_in": 3600
+# }
 sub login_api {
     my $c = shift;
 

@@ -26,11 +26,19 @@ sub get_users {
 
 # POST /users
 sub create_user {
-    die ("Should not get here BENJAMIN");
     my $c = shift;
+
+    unless ($c->current_user->has_priv->{'CREATE_USER'}) {
+        return $c->render(
+            json => {
+                'error' => 'ENOTAUTHORIZED',
+            },
+            status => 403,
+        );
+    }
+
     my $data = $c->req->json;
     $data = $data->{user};
-
 
     my $usertypeid = $data->{user_type_id};
     my $usertype = $c->schema->resultset('UserType')->find({
