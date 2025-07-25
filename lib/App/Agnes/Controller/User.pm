@@ -28,7 +28,7 @@ sub get_users {
 sub create_user {
     my $c = shift;
 
-    unless ($c->current_user->has_priv->{'CREATE_USER'}) {
+    unless ($c->current_user->has_priv('CREATE_USER')) {
         return $c->render(
             json => {
                 'error' => 'ENOTAUTHORIZED',

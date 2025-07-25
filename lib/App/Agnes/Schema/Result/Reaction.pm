@@ -7,7 +7,7 @@ package App::Agnes::Schema::Result::Reaction;
 use strict;
 use warnings;
 
-use base 'App::Agnes::DB::Result';
+use base 'DBIx::Class::Core';
 __PACKAGE__->load_components("InflateColumn::DateTime");
 __PACKAGE__->table("reactions");
 __PACKAGE__->add_columns(
@@ -51,8 +51,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 11:32:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:GHEbRytntRSuK5Aose/Z9g
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:q0YeoXX7eHM9kx37FNz6wQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

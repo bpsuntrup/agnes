@@ -15,10 +15,7 @@ make_schema_at(
         dump_directory => "$FindBin::Bin/../lib",
         generate_pod => 0,
         use_namespaces => 1,
-        result_base_class => 'App::Agnes::DB::Result',
-        resultset_base_class => 'App::Agnes::DB::ResultSet',
         components => ['InflateColumn::DateTime'],
-        really_erase_my_files => 1, # BE CAREFUL
     },
     [ $config->{db_conn}->() ]
 );

@@ -7,7 +7,7 @@ package App::Agnes::Schema::Result::Role;
 use strict;
 use warnings;
 
-use base 'App::Agnes::DB::Result';
+use base 'DBIx::Class::Core';
 __PACKAGE__->load_components("InflateColumn::DateTime");
 __PACKAGE__->table("roles");
 __PACKAGE__->add_columns(
@@ -37,8 +37,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 11:32:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+5q4KL34D7Jv5jDymD+ZdQ
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6fOQEVjdZ+o9/8UUJfmITQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

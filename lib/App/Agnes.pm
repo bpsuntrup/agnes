@@ -25,7 +25,7 @@ sub startup {
     $self->helper( current_user => sub {
         my $c = shift;
         state $username = $c->session('username');
-        state $user = Model->schema->resultset('User')->find({
+        state $user = Model->rs('User')->find({
             username => $username
         });
         return $user;
