@@ -13,15 +13,15 @@ __PACKAGE__->table("member_types");
 __PACKAGE__->add_columns("member_type", { data_type => "text", is_nullable => 0 });
 __PACKAGE__->set_primary_key("member_type");
 __PACKAGE__->has_many(
-  "space_users",
-  "App::Agnes::Schema::Result::SpaceUser",
+  "space_accounts",
+  "App::Agnes::Schema::Result::SpaceAccount",
   { "foreign.member_type" => "self.member_type" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Lv702o2P/nQipY1jH4AVRQ
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+Y4m/U1ydN257yA1mOa0Qg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

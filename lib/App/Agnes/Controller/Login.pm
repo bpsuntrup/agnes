@@ -13,13 +13,13 @@ sub login_now {
     my $username = $self->param('username');
     my $password = $self->param('password');
 
-    my $user = Model->schema->resultset('User')->search({
+    my $account = Model->schema->resultset('Account')->search({
         username => $username,
     })->first;
 
 
     # TODO: replace with real auth
-    if ($password eq $user->password) {
+    if ($password eq $account->password) {
         $self->session(username => $username);
 
         return $self->redirect_to('/'); # TODO: redirect to app
@@ -33,7 +33,7 @@ sub login_now {
 # TODO: not right now. 
 # POST /api/v1/login
 # {
-#    "user": {
+#    "account": {
 #       "username": "alice",
 #       "password": "secret"
 #   }
@@ -51,11 +51,11 @@ sub login_api {
     my $c = shift;
 
     # Check JSON first
-    my $user = $c->req->json->{user};
+    my $account = $c->req->json->{account};
 
-    my $auth = Model->schema->resultset('User')->authenticate(
-        username => $user->{username},
-        password => $user->{password},
+    my $auth = Model->schema->resultset('Account')->authenticate(
+        username => $account->{username},
+        password => $account->{password},
     );
     if ($auth) {
         $c->render();

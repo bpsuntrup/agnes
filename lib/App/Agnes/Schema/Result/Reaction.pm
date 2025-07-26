@@ -21,7 +21,7 @@ __PACKAGE__->add_columns(
   },
   "post_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
-  "user_id",
+  "account_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
   "reaction_type_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
@@ -29,7 +29,13 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("reaction_id");
 __PACKAGE__->add_unique_constraint(
   "reactions_uk_post_id_user_id_reaction_type_id",
-  ["post_id", "user_id", "reaction_type_id"],
+  ["post_id", "account_id", "reaction_type_id"],
+);
+__PACKAGE__->belongs_to(
+  "account",
+  "App::Agnes::Schema::Result::Account",
+  { account_id => "account_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
 );
 __PACKAGE__->belongs_to(
   "post",
@@ -43,16 +49,10 @@ __PACKAGE__->belongs_to(
   { reaction_type_id => "reaction_type_id" },
   { is_deferrable => 0, on_delete => "RESTRICT", on_update => "NO ACTION" },
 );
-__PACKAGE__->belongs_to(
-  "user",
-  "App::Agnes::Schema::Result::User",
-  { user_id => "user_id" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
-);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:q0YeoXX7eHM9kx37FNz6wQ
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9bvnPI+xmjFgQrjt0CU6jQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

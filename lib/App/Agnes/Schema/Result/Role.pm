@@ -24,21 +24,21 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("role_id");
 __PACKAGE__->add_unique_constraint("roles_name_key", ["name"]);
 __PACKAGE__->has_many(
+  "account_roles",
+  "App::Agnes::Schema::Result::AccountRole",
+  { "foreign.role_id" => "self.role_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+__PACKAGE__->has_many(
   "role_permissions",
   "App::Agnes::Schema::Result::RolePermission",
   { "foreign.role_id" => "self.role_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
-__PACKAGE__->has_many(
-  "user_roles",
-  "App::Agnes::Schema::Result::UserRole",
-  { "foreign.role_id" => "self.role_id" },
-  { cascade_copy => 0, cascade_delete => 0 },
-);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6fOQEVjdZ+o9/8UUJfmITQ
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9ywmgxf4/2mf7cDzPVMs3g
 
 __PACKAGE__->many_to_many(permissions => 'role_permissions', 'permission');
 

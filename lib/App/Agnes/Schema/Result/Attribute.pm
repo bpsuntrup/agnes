@@ -15,7 +15,7 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 0 },
   "type",
   { data_type => "text", is_nullable => 0 },
-  "user_attribute_type_id",
+  "attribute_id",
   {
     data_type         => "integer",
     is_auto_increment => 1,
@@ -23,19 +23,23 @@ __PACKAGE__->add_columns(
     sequence          => "user_attribute_types_user_attribute_type_id_seq",
   },
 );
-__PACKAGE__->set_primary_key("user_attribute_type_id");
+__PACKAGE__->set_primary_key("attribute_id");
 __PACKAGE__->has_many(
-  "user_attributes",
-  "App::Agnes::Schema::Result::UserAttribute",
-  {
-    "foreign.user_attribute_type_id" => "self.user_attribute_type_id",
-  },
+  "account_attributes",
+  "App::Agnes::Schema::Result::AccountAttribute",
+  { "foreign.attribute_id" => "self.attribute_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+__PACKAGE__->has_many(
+  "account_type_attributes",
+  "App::Agnes::Schema::Result::AccountTypeAttribute",
+  { "foreign.attribute_id" => "self.attribute_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:46Yk4O/nh5hR2r0w9HY7jA
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jFW3SeyKBKEUfzG9XvuT/Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -14,69 +14,24 @@ use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
 
-sub set_up_db : Test(startup) {
-    # Create database:
-    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
-    $dbh->do("CREATE DATABASE agnes_test");
-    $dbh->disconnect;
-
-    # Load in schema:
-    my $src_db = 'agnes'; # TODO: copy from dev env
-    my $dest_db = 'agnes_test'; # TODO: make multiple names possible to run ast
-    my $schema_dump = `pg_dump --schema-only $src_db`;
-    die "pg_dump failed" unless $schema_dump;
-    open my $psql, "|-", "psql -q $dest_db" or die "psql failed :$!";
-    print $psql $schema_dump;
-    close $psql or die "Error loading schema into $dest_db";
-
-    # Load in test data:
-    $dbh = DBI->connect("dbi:Pg:dbname=agnes_test"); # TODO: set up test_runner user
-    my $td = Tests::Utils::TestData->new($dbh);
-    $td->add_test_users();
-    $dbh->disconnect;
-
-    # Point config to new db
-    App::Agnes::Config->new->{db_conn} = sub {
-        return "dbi:Pg:dbname=agnes_test";
-    };
-    Model->reconnect;
-}
-
-sub tear_down_db : Test(shutdown) {
-    Model->schema->storage->disconnect;
-    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
-    $dbh->do("DROP DATABASE agnes_test");
-    $dbh->disconnect;
-}
-
-# wrap each test in a txn
-sub setup : Test(setup) {
-    Model->schema->storage->txn_begin;
-}
-
-sub teardown : Test(teardown) {
-    Model->schema->storage->txn_rollback;
-    Model->schema->storage->disconnect;
-}
-
 sub db_is_set_up :Tests {
     my $dbh = DBI->connect("dbi:Pg:dbname=agnes_test");
-    my $users = $dbh->selectall_arrayref("select * from users");
-    is (scalar @$users, 3, "got 3 users as expected");
+    my $accounts = $dbh->selectall_arrayref("select * from accounts");
+    is (scalar @$accounts, 3, "got 3 accounts as expected");
 
     $dbh->disconnect;
 }
 
-sub can_get_user :Tests {
+sub can_get_account :Tests {
     my $schema = Model->schema;
-    my $user = $schema->resultset('User')->search({
+    my $account = $schema->resultset('Account')->search({
         username => 'mary',
     })->first;
-    is($user->password, 'pass1', 'can get individual user from search');
+    is($account->password, 'pass1', 'can get individual account from search');
 
-    my @users = $schema->resultset('User')->all;
-    is(scalar @users, 3, "Got 3 users");
-    is($users[0]->username, 'mary', "First user is correctly named");
+    my @accounts = $schema->resultset('Account')->all;
+    is(scalar @accounts, 3, "Got 3 accounts");
+    is($accounts[0]->username, 'mary', "First account is correctly named");
 }
 
 sub test_config :Tests {

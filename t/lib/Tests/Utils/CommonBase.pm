@@ -12,7 +12,7 @@ use aliased 'App::Agnes::Model';
 
 sub set_up_db : Test(startup) {
     # Create database:
-    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
+    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runneraccount 
     $dbh->do("CREATE DATABASE agnes_test");
     $dbh->disconnect;
 
@@ -26,9 +26,9 @@ sub set_up_db : Test(startup) {
     close $psql or die "Error loading schema into $dest_db";
 
     # Load in test data:
-    $dbh = DBI->connect("dbi:Pg:dbname=agnes_test"); # TODO: set up test_runner user
+    $dbh = DBI->connect("dbi:Pg:dbname=agnes_test"); # TODO: set up test_runneraccount 
     my $td = Tests::Utils::TestData->new($dbh);
-    $td->add_test_users();
+    $td->add_test_accounts();
     $dbh->disconnect;
 
     # Point config to new db
@@ -40,7 +40,7 @@ sub set_up_db : Test(startup) {
 
 sub tear_down_db : Test(shutdown) {
     Model->schema->storage->disconnect;
-    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runner user
+    my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runneraccount 
     $dbh->do("DROP DATABASE agnes_test");
     $dbh->disconnect;
 }

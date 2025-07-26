@@ -1,5 +1,5 @@
 use utf8;
-package App::Agnes::Schema::Result::SpaceUser;
+package App::Agnes::Schema::Result::SpaceAccount;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
@@ -9,7 +9,7 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 __PACKAGE__->load_components("InflateColumn::DateTime");
-__PACKAGE__->table("space_users");
+__PACKAGE__->table("space_accounts");
 __PACKAGE__->add_columns(
   "space_user_id",
   {
@@ -21,7 +21,7 @@ __PACKAGE__->add_columns(
   },
   "space_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
-  "user_id",
+  "account_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
   "member_type",
   {
@@ -32,7 +32,13 @@ __PACKAGE__->add_columns(
   },
 );
 __PACKAGE__->set_primary_key("space_user_id");
-__PACKAGE__->add_unique_constraint("space_users_uk_space_id_user_id", ["space_id", "user_id"]);
+__PACKAGE__->add_unique_constraint("space_users_uk_space_id_user_id", ["space_id", "account_id"]);
+__PACKAGE__->belongs_to(
+  "account",
+  "App::Agnes::Schema::Result::Account",
+  { account_id => "account_id" },
+  { is_deferrable => 0, on_delete => "RESTRICT", on_update => "NO ACTION" },
+);
 __PACKAGE__->belongs_to(
   "member_type",
   "App::Agnes::Schema::Result::MemberType",
@@ -45,16 +51,10 @@ __PACKAGE__->belongs_to(
   { space_id => "space_id" },
   { is_deferrable => 0, on_delete => "RESTRICT", on_update => "NO ACTION" },
 );
-__PACKAGE__->belongs_to(
-  "user",
-  "App::Agnes::Schema::Result::User",
-  { user_id => "user_id" },
-  { is_deferrable => 0, on_delete => "RESTRICT", on_update => "NO ACTION" },
-);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6top6HGUWfxQ+8sDLx32iQ
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:KMgggvttzN02lbO36zcHsg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

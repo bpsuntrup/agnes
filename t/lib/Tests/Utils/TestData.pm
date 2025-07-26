@@ -3,7 +3,7 @@ package Tests::Utils::TestData;
 =pod
 
 my $td = Tests::TestData->new($dbh);
-$td->add_test_users;
+$td->add_test_accounts;
 
 =cut
 
@@ -14,10 +14,10 @@ sub new {
     }, $class;
 }
 
-sub add_test_users {
+sub add_test_accounts {
     my $self = shift;
     $self->{dbh}->do("
-        INSERT INTO user_types
+        INSERT INTO account_types
         (name)
         VALUES
         ('faithful'),
@@ -26,8 +26,8 @@ sub add_test_users {
         ('has_required_attrs')
     ");
     $self->{dbh}->do("
-        INSERT INTO users
-        ( username ,password ,user_type_id, is_admin )
+        INSERT INTO accounts
+        ( username ,password ,account_type_id, is_admin )
         VALUES
         ( 'mary', 'pass1', 1, true),  -- admin
         ( 'joe',  'pass2', 2, false), -- highly privileged non admin
@@ -45,7 +45,7 @@ sub add_test_users {
         INSERT INTO permissions
         (permission)
         VALUES
-        ('CREATE_USER')
+        ('CREATE_ACCOUNT')
         ");
     $self->{dbh}->do("
         INSERT INTO roles
@@ -54,12 +54,12 @@ sub add_test_users {
         ('bishop')
     ");
     $self->{dbh}->do("
-        INSERT INTO user_roles
-        (user_id, role_id)
-        SELECT users.user_id,
+        INSERT INTO account_roles
+        (account_id, role_id)
+        SELECT accounts.account_id,
                roles.role_id
-        FROM users
-        JOIN roles ON users.username = 'joe' AND roles.name = 'bishop'
+        FROM accounts
+        JOIN roles ON accounts.accountname = 'joe' AND roles.name = 'bishop'
     ");
     #$self->{dbh}->do(" ");
     #$self->{dbh}->do(" ");

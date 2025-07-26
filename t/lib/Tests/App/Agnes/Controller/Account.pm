@@ -1,4 +1,4 @@
-package Tests::App::Agnes::Controller::User;
+package Tests::App::Agnes::Controller::Account;
 
 use strict;
 use warnings;
@@ -14,81 +14,81 @@ use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
 
-#sub get_users :Tests {
+#sub get_accounts :Tests {
 #    my $t = Test::Mojo->new('App::Agnes');
 #    $t->app->log->level('fatal');
-#    $t->get_ok('/users')->status_is(401, "Sad path get users");
+#    $t->get_ok('/accounts')->status_is(401, "Sad path get accounts");
 #
 #    $t->post_ok('/login' => form => {
 #        username => "mary",
 #        password => "pass1",
 #    })->status_is(302)
 #      ->header_like('Set-Cookie' => qr/mojolicious=/, 'got session cookie');
-#    $t->get_ok('/users')->status_is(200)
+#    $t->get_ok('/accounts')->status_is(200)
 #                        ->json_has('/data/0/username', 'can get a username');
 #}
 
-#sub create_user : Tests {
+#sub create_account : Tests {
 #    my $t = Test::Mojo->new('App::Agnes');
-#    $t->post_ok("/users" => json => {
-#        user => {
+#    $t->post_ok("/accounts" => json => {
+#        account => {
 #            username    => "mildred",
 #            password    => "millypass1",
 #            displayname => "Mildred Suntrup",
 #            birthdate   => "2 Dec 2020",
 #            email       => 'milly@suntrup.net',
-#            user_type_id   => 1,
+#            account_type_id   => 1,
 #        },
-#    })->status_is(200, "Able to create user with POST /users");
+#    })->status_is(200, "Able to create account with POST /accounts");
 #
-#    my $user = Model->schema->resultset('User')->search({
+#    my $account = Model->schema->resultset('Account')->search({
 #        username => 'mildred',
 #    })->first;
 #
-#    is($user->displayname, 'Mildred Suntrup', "Able to get user out of database");
-#    isnt($user->password, 'millypass1', "Passwords should not be stored in clear text");
+#    is($account->displayname, 'Mildred Suntrup', "Able to get account out of database");
+#    isnt($account->password, 'millypass1', "Passwords should not be stored in clear text");
 #}
 
-sub create_user_sad : Tests {
+sub create_account_sad : Tests {
     my $t = Test::Mojo->new('App::Agnes');
 
-    note("Create user should fail when not logged in.");
-    $t->post_ok("/users" => json => {
-        user => {
+    note("Create account should fail when not logged in.");
+    $t->post_ok("/accounts" => json => {
+        account => {
             username    => "mildred",
             password    => "millypass1",
             displayname => "Mildred Suntrup",
             birthdate   => "2 Dec 2020",
             email       => 'milly@suntrup.net',
-            user_type_id   => 1,
+            account_type_id   => 1,
         },
-    })->status_is(401, "Create User fails when not logged in.")
+    })->status_is(401, "Create account fails when not logged in.")
       ->json_is('/error', 'ENOLOGIN', "Get ENOLOGIN on failure to log in");
 
-    note("Create User fails when logged in with non-admin user.");
+    note("Create account fails when logged in with non-admin account.");
     $t->post_ok('/login' => form => {
         username => "joe",
         password => "pass2",
     })->status_is(302);
-    $t->post_ok("/users" => json => {
-        user => {
+    $t->post_ok("/accounts" => json => {
+        account => {
             username    => "mildred",
             password    => "millypass1",
             displayname => "Mildred Suntrup",
             birthdate   => "2 Dec 2020",
             email       => 'milly@suntrup.net',
-            user_type_id   => 1,
+            account_type_id   => 1,
         },
-    })->status_is(403, "Not authorized to create user with unpriveledged user")
+    })->status_is(403, "Not authorized to create account with unpriveledged account")
       ->json_is('/error', 'ENOTAUTHORIZED', "Get ENOTAUTHORIZED");
 
-    note("Create User fails when required column is missing.");
-    note("Create User fails when required attribute is missing.");
+    note("Create account fails when required column is missing.");
+    note("Create account fails when required attribute is missing.");
     note("TODO: test openapi validation");
 }
 
-sub create_user_happy : Tests {
-    note("Create user works when logged in with admin user and all required fields are included");
+sub create_account_happy : Tests {
+    note("Create account works when logged in with admin account and all required fields are included");
 }
 
 

@@ -1,34 +1,34 @@
-package App::Agnes::Controller::User;
+package App::Agnes::Controller::Account;
 
 use strict;
 use warnings;
 
 use Mojo::Base 'Mojolicious::Controller';
 
-# GET /users
-sub get_users {
+# GET /accounts
+sub get_accounts {
     my $c = shift;
     my $username = $c->session('username');
     if ($username) {
-        my $users = {
+        my $accounts = {
             data => [
                 {
                     username => $username,
                 },
             ],
         };
-        return $c->render(json => $users);
+        return $c->render(json => $accounts);
     }
     else {
         return $c->render(json => { error => "Unauthorized" }, status => 401);
     }
 }
 
-# POST /users
-sub create_user {
+# POST /accounts
+sub create_account {
     my $c = shift;
 
-    unless ($c->current_user->has_permission('CREATE_USER')) {
+    unless ($c->current_account->has_permission('CREATE_ACCOUNT')) {
         return $c->render(
             json => {
                 'error' => 'ENOTAUTHORIZED',
@@ -38,25 +38,25 @@ sub create_user {
     }
 
     my $data = $c->req->json;
-    $data = $data->{user};
+    $data = $data->{account};
 
-    my $usertypeid = $data->{user_type_id};
-    my $usertype = $c->schema->resultset('UserType')->find({
-        user_type_id => $usertypeid
+    my $accounttypeid = $data->{account_type_id};
+    my $accounttype = $c->schema->resultset('AccountType')->find({
+        account_type_id => $accounttypeid
     });
 
-    #my $required_attributes = $usertype->required_attributes;
+    #my $required_attributes = $accounttype->required_attributes;
 
-    my %user = (
+    my %account = (
         username     => $data->{username},
         password     => $data->{password},
         displayname  => $data->{displayname},
         birthdate    => $data->{birthdate},
         email        => $data->{email},
-        user_type_id => $data->{user_type_id},
+        account_type_id => $data->{account_type_id},
     );
 
-    $c->schema->resultset('User')->create(\%user);
+    $c->schema->resultset('Account')->create(\%account);
     return $c->render(text => "OK", status => 200);
 }
 

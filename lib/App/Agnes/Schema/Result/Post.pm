@@ -37,8 +37,8 @@ __PACKAGE__->has_many(
 );
 __PACKAGE__->belongs_to(
   "author",
-  "App::Agnes::Schema::Result::User",
-  { user_id => "author_id" },
+  "App::Agnes::Schema::Result::Account",
+  { account_id => "author_id" },
   { is_deferrable => 0, on_delete => "RESTRICT", on_update => "NO ACTION" },
 );
 __PACKAGE__->has_many(
@@ -55,8 +55,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:G32QBMHHxK9Z0dUVEKz50A
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vZBJelKLDH0/R5ERTwUDBA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -28,13 +28,13 @@ sub startup {
         App::Agnes::DB->dbh;
     });
 
-    $self->helper( current_user => sub {
+    $self->helper( current_account => sub {
         my $c = shift;
         state $username = $c->session('username');
-        state $user = Model->rs('User')->find({
+        state $account = Model->rs('Account')->find({
             username => $username
         });
-        return $user;
+        return $account;
     });
 
     $self->helper( schema => sub {
@@ -53,7 +53,7 @@ sub startup {
         return 1 if $c->session('username');
 
         # TODO: support bearer-token authentication as well here.
-        # TODO: set up user in stash here
+        # TODO: set up account in stash here
 
         $c->render(
             json => { 
@@ -76,8 +76,8 @@ sub startup {
     $r->post('/api/v1/login')->to('login#login_api');
 
     $auth->get('/login')->to('login#login_ok');
-    $auth->post('/users')->to('user#create_user');
-    $auth->get('/users')->to('user#get_users');
+    $auth->post('/accounts')->to('account#create_account');
+    $auth->get('/accounts')->to('account#get_accounts');
 }
 
 

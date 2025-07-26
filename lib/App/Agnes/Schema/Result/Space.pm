@@ -52,8 +52,8 @@ __PACKAGE__->belongs_to(
 );
 __PACKAGE__->belongs_to(
   "owner",
-  "App::Agnes::Schema::Result::User",
-  { user_id => "owner_id" },
+  "App::Agnes::Schema::Result::Account",
+  { account_id => "owner_id" },
   { is_deferrable => 0, on_delete => "RESTRICT", on_update => "NO ACTION" },
 );
 __PACKAGE__->has_many(
@@ -63,15 +63,15 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 __PACKAGE__->has_many(
-  "space_users",
-  "App::Agnes::Schema::Result::SpaceUser",
+  "space_accounts",
+  "App::Agnes::Schema::Result::SpaceAccount",
   { "foreign.space_id" => "self.space_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:yA5QMo2WKV/1cvUWHBZwug
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:l5xv1qsJIFpxTag0YYXhSw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
