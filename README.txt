@@ -17,6 +17,10 @@ Validate documentation:
 * see https://github.com/APIDevTools/swagger-cli
 swagger-cli validate dox/openapi3/agnes.yaml
 
+Update schema:
+make changes in database directly, then:
+carmel exec -- bin/load_schema.pl
+
 TODO:
 * google calendar integration
 * users should have customizable attributes that differe for different user

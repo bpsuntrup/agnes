@@ -40,6 +40,7 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6fOQEVjdZ+o9/8UUJfmITQ
 
+__PACKAGE__->many_to_many(permissions => 'role_permissions', 'permission');
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;

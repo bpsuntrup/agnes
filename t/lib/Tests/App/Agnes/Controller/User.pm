@@ -84,6 +84,7 @@ sub create_user_sad : Tests {
 
     note("Create User fails when required column is missing.");
     note("Create User fails when required attribute is missing.");
+    note("TODO: test openapi validation");
 }
 
 sub create_user_happy : Tests {

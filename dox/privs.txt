@@ -1,0 +1,5 @@
+privs are stored in table permissions
+
+* CREATE_USER
+    * allows a user to create a user
+    * gates the route POST /api/v1/users

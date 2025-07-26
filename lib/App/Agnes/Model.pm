@@ -5,6 +5,8 @@ use aliased 'App::Agnes::Schema';
 
 my @db_conn = App::Agnes::Config->new->{db_conn}->();
 our $schema = Schema->connect(@db_conn);
+$schema->storage->sql_maker->quote_char('"');
+$schema->storage->sql_maker->name_sep('.');
 
 sub schema {
     return $schema;

@@ -29,9 +29,9 @@ sub add_test_users {
         INSERT INTO users
         ( username ,password ,user_type_id, is_admin )
         VALUES
-        ( 'mary', 'pass1', 1, true),
-        ( 'joe',  'pass2', 2, false),
-        ( 'john', 'pass3', 3, false)
+        ( 'mary', 'pass1', 1, true),  -- admin
+        ( 'joe',  'pass2', 2, false), -- highly privileged non admin
+        ( 'john', 'pass3', 3, false)  -- no privs
     ");
     $self->{dbh}->do(q{
         INSERT INTO attributes
@@ -41,6 +41,28 @@ sub add_test_users {
         ('marital_status', 'enum("married", "unmarried")'),
         ('christian_name', 'text')
     });
+    $self->{dbh}->do("
+        INSERT INTO permissions
+        (permission)
+        VALUES
+        ('CREATE_USER')
+        ");
+    $self->{dbh}->do("
+        INSERT INTO roles
+        (name)
+        VALUES
+        ('bishop')
+    ");
+    $self->{dbh}->do("
+        INSERT INTO user_roles
+        (user_id, role_id)
+        SELECT users.user_id,
+               roles.role_id
+        FROM users
+        JOIN roles ON users.username = 'joe' AND roles.name = 'bishop'
+    ");
+    #$self->{dbh}->do(" ");
+    #$self->{dbh}->do(" ");
     #$self->{dbh}->do(" ");
 }
 
