@@ -62,7 +62,7 @@ sub login_api {
     }
     else {
         $c->render(
-            json => { 'error' => 'EINVALIDCREDS', },
+            json => { 'err' => 'EINVALIDCREDS', },
             status => 401,
         );
     }
@@ -73,7 +73,7 @@ sub login_api {
 sub login_ok {
     my $c = shift;
     return $c->render(
-        text => 'OK' . $c->current_account->username,
+        text => 'OK' . $c->current_account,
         status => 200,
     );
 }

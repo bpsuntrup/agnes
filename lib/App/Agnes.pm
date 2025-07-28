@@ -9,6 +9,7 @@ use Mojo::Pg;
 use App::Agnes::DB;
 use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
+use App::Agnes::Error qw/error_code_to_http/;
 
 # This method will run once at server start
 sub startup {
@@ -30,11 +31,9 @@ sub startup {
 
     $self->helper( current_account => sub {
         my $c = shift;
-        my $username = $c->session('username');
-        my $account = Model->rs('Account')->find({
-            username => $username
-        });
-        return $account;
+
+        # TODO: support backend sessions
+        return  $c->session('username');
     });
 
     $self->helper( schema => sub {
@@ -43,6 +42,18 @@ sub startup {
 
     $self->helper( config => sub {
         return $config;
+    });
+
+    $self->helper(render_error => sub {
+        my $c = shift;
+        my %params = @_;
+        return $c->render(
+            json => {
+                err => $params{err},
+                msg => $params{msg},
+            },
+            status => error_code_to_http($params{err}),
+        );
     });
 
     # Router
@@ -55,13 +66,7 @@ sub startup {
         # TODO: support bearer-token authentication as well here.
         # TODO: set up account in stash here
 
-        $c->render(
-            json => { 
-                error => "ENOLOGIN",
-                message => "Please log in.",
-            },
-            status => 401
-        );
+        $c->render_error( err => "ENOLOGIN", msg => "Please log in.");
 
         return undef;
     };

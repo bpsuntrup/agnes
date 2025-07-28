@@ -9,6 +9,7 @@ requires 'Scope::Guard';
 requires 'DBIx::Class';
 requires 'DBIx::Class::Schema::Loader';
 requires 'Mojolicious::Plugin::OpenAPI';
+requires 'Object::Pad';
 
 on 'test' => sub {
   requires 'Test::More';

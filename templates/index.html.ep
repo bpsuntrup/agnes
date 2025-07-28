@@ -3,7 +3,7 @@
 </head>
 <body>
 <h1> login or hi or something </h1> 
-<form action="/login">
+<form action="/login" method="POST">
 <input name="username"></input>
 <input name="password"></input>
 <button click="submit">submit</button>

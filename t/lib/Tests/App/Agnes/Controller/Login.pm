@@ -14,7 +14,7 @@ sub test_normal_login : Tests {
     note("Test login without cookie.");
     $t->get_ok('/login')
       ->status_is(401, "Cannot verify login when not logged in")
-      ->json_is('/error', 'ENOLOGIN', 'Get the ENOLOGIN error json');
+      ->json_is('/err', 'ENOLOGIN', 'Get the ENOLOGIN error json');
 
     note("Test logging in by getting cookie.");
     $t->post_ok('/login' => form => {

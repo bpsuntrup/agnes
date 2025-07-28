@@ -22,7 +22,7 @@ sub get_accounts {
         return $c->render(json => $accounts);
     }
     else {
-        return $c->render(json => { error => "Unauthorized" }, status => 401);
+        return $c->render(json => { err => "Unauthorized" }, status => 401);
     }
 }
 
@@ -30,17 +30,21 @@ sub get_accounts {
 sub create_account {
     my $c = shift;
 
-    unless ($c->current_account->has_permission('CREATE_ACCOUNT')) {
-        return $c->render(
-            json => {
-                'error' => 'ENOTAUTHORIZED',
-            },
-            status => 403,
-        );
-    }
+    #unless ($c->current_account->has_permission('CREATE_ACCOUNT')) {
+    #    return $c->render(
+    #        json => {
+    #            'error' => 'ENOTAUTHORIZED',
+    #        },
+    #        status => 403,
+    #    );
+    #}
 
     my $data = $c->req->json;
-    my $account = BizAccount->create_account($data->{account});
+    my $res = BizAccount->create_account(account         => $data->{account},
+                                         current_account => $c->current_account);
+    if ($res->err) {
+        return $c->render_error(err => $res->err, msg => $res->msg);
+    }
 
     return $c->render(text => "OK", status => 200);
 }

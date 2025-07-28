@@ -63,7 +63,7 @@ sub create_account_sad : Tests {
             account_type_id   => 1,
         },
     })->status_is(401, "Create account fails when not logged in.")
-      ->json_is('/error', 'ENOLOGIN', "Get ENOLOGIN on failure to log in");
+      ->json_is('/err', 'ENOLOGIN', "Get ENOLOGIN on failure to log in");
 
     note("Create account fails when logged in with non-admin account.");
     $t->post_ok('/login' => form => {
@@ -80,7 +80,7 @@ sub create_account_sad : Tests {
             account_type_id   => 1,
         },
     })->status_is(403, "Not authorized to create account with unpriveledged account")
-      ->json_is('/error', 'ENOTAUTHORIZED', "Get ENOTAUTHORIZED");
+      ->json_is('/err', 'ENOTAUTHORIZED', "Get ENOTAUTHORIZED");
 
     note("Create account fails when required column is missing....");
     note("Required columns are username, password, and account_type.");
@@ -98,7 +98,7 @@ sub create_account_sad : Tests {
             email       => 'milly@suntrup.net',
         },
     })->status_is(400, "Fails to create an account without an account_type")
-      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+      ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
     $t->post_ok("/api/v1/accounts" => json => {
         account => {
             username    => "mildred",
@@ -109,7 +109,7 @@ sub create_account_sad : Tests {
             account_type_id   => 1337,
         },
     })->status_is(400, "Fails to create an account with an invalid account_type")
-      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+      ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
 
     note("Create account fails when required attribute is missing.");
     $t->post_ok("/api/v1/accounts" => json => {
@@ -126,7 +126,7 @@ sub create_account_sad : Tests {
             },
         },
     })->status_is(400, "Fails to create an account with missing required attribute")
-      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+      ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
 
     note("Create account fails when attribute is wrong type.");
     $t->post_ok("/api/v1/accounts" => json => {
@@ -144,7 +144,7 @@ sub create_account_sad : Tests {
             },
         },
     })->status_is(400, "Fails to create an account with bad date type")
-      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+      ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
 
     note("TODO: test all the types, enum, date, boolean for validity here");
 
