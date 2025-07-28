@@ -53,7 +53,7 @@ sub create_account_sad : Tests {
     my $t = Test::Mojo->new('App::Agnes');
 
     note("Create account should fail when not logged in.");
-    $t->post_ok("/accounts" => json => {
+    $t->post_ok("/api/v1/accounts" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -70,7 +70,7 @@ sub create_account_sad : Tests {
         username => "joe",
         password => "pass2",
     })->status_is(302);
-    $t->post_ok("/accounts" => json => {
+    $t->post_ok("/api/v1/accounts" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -82,13 +82,43 @@ sub create_account_sad : Tests {
     })->status_is(403, "Not authorized to create account with unpriveledged account")
       ->json_is('/error', 'ENOTAUTHORIZED', "Get ENOTAUTHORIZED");
 
-    note("Create account fails when required column is missing.");
+    note("Create account fails when required column is missing....");
+    note("Required columns are username, password, and account_type.");
+    $t->post_ok('/login' => form => {
+        username => "mary",
+        password => "pass1",
+    })->status_is(302);
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+        },
+    })->status_is(400, "Fails to create an account without an account_type")
+      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 1337,
+        },
+    })->status_is(400, "Fails to create an account with an invalid account_type");
+      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+
     note("Create account fails when required attribute is missing.");
+
+
     note("TODO: test openapi validation");
 }
 
 sub create_account_happy : Tests {
     note("Create account works when logged in with admin account and all required fields are included");
+    note("Create account works when logged in with privileged nonadmin account and all required fields are included");
 }
 
 

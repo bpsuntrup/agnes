@@ -23,7 +23,8 @@ sub add_test_accounts {
         ('faithful'),
         ('priest'),
         ('bishop'),
-        ('has_required_attrs')
+        ('has_required_attrs'),
+        ('no_required_attrs')
     ");
     $self->{dbh}->do("
         INSERT INTO accounts
@@ -39,7 +40,8 @@ sub add_test_accounts {
         VALUES
         ('reception_date', 'date'),
         ('marital_status', 'enum("married", "unmarried")'),
-        ('christian_name', 'text')
+        ('christian_name', 'text'),
+        ('fav_book', 'text')
     });
     $self->{dbh}->do("
         INSERT INTO permissions
@@ -59,9 +61,26 @@ sub add_test_accounts {
         SELECT accounts.account_id,
                roles.role_id
         FROM accounts
-        JOIN roles ON accounts.accountname = 'joe' AND roles.name = 'bishop'
+        JOIN roles ON accounts.username = 'joe' AND roles.name = 'bishop'
     ");
-    #$self->{dbh}->do(" ");
+    # Add required attributes
+    $self->{dbh}->do(" 
+        INSERT INTO account_type_attributes
+        (account_type_id, attribute_id, required)
+        SELECT at.account_type_id, att.attribute_id, true
+        FROM account_types at CROSS JOIN attributes att
+        WHERE
+        (at.name = 'has_required_attrs' AND att.name = 'christian_name')
+    ");
+    # Add non required attributes
+    $self->{dbh}->do(" 
+        INSERT INTO account_type_attributes
+        (account_type_id, attribute_id, required)
+        SELECT at.account_type_id, att.attribute_id, false
+        FROM account_types at CROSS JOIN attributes att
+        WHERE
+        (at.name = 'has_required_attrs' AND att.name = 'fav_book')
+    ");
     #$self->{dbh}->do(" ");
     #$self->{dbh}->do(" ");
 }

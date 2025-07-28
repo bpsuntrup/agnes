@@ -6,3 +6,6 @@ EINVALIDCREDS
 
 ENOLOGIN
 * must be logged in to access resource
+
+EBADREQUEST
+* invalid data in request body
