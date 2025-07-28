@@ -73,7 +73,7 @@ sub login_api {
 sub login_ok {
     my $c = shift;
     return $c->render(
-        text => 'OK',
+        text => 'OK' . $c->current_account->username,
         status => 200,
     );
 }

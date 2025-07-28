@@ -30,8 +30,8 @@ sub startup {
 
     $self->helper( current_account => sub {
         my $c = shift;
-        state $username = $c->session('username');
-        state $account = Model->rs('Account')->find({
+        my $username = $c->session('username');
+        my $account = Model->rs('Account')->find({
             username => $username
         });
         return $account;
@@ -76,8 +76,8 @@ sub startup {
     $r->post('/api/v1/login')->to('login#login_api');
 
     $auth->get('/login')->to('login#login_ok');
-    $auth->post('/accounts')->to('account#create_account');
-    $auth->get('/accounts')->to('account#get_accounts');
+    $apiv1->post('/accounts')->to('account#create_account');
+    $apiv1->get('/accounts')->to('account#get_accounts');
 }
 
 

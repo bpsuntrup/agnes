@@ -70,7 +70,8 @@ sub add_test_accounts {
         SELECT at.account_type_id, att.attribute_id, true
         FROM account_types at CROSS JOIN attributes att
         WHERE
-        (at.name = 'has_required_attrs' AND att.name = 'christian_name')
+        (at.name = 'has_required_attrs' AND att.name = 'christian_name') OR
+        (at.name = 'has_required_attrs' AND att.name = 'reception_date')
     ");
     # Add non required attributes
     $self->{dbh}->do(" 

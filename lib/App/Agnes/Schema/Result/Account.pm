@@ -94,17 +94,6 @@ use DBI;
 
 __PACKAGE__->many_to_many(roles => 'account_roles', 'role');
 
-sub has_permission_old { 
-    my ($self, $perm) = @_;
-    return 1 if $self->is_admin;
-    for my $role ($self->roles->all) {
-        for my $permission ($role->permissions->all) {
-            return 1 if $permission->permission eq $perm;
-        }
-    }
-    return 0;
-}
-
 sub has_permission {
     my ($self, $perm) = @_;
     return 1 if $self->is_admin;

@@ -88,6 +88,7 @@ sub create_account_sad : Tests {
         username => "mary",
         password => "pass1",
     })->status_is(302);
+    $t->get_ok("/login")->status_is(200)->content_like(qr/mary/);
     $t->post_ok("/api/v1/accounts" => json => {
         account => {
             username    => "mildred",
@@ -107,11 +108,45 @@ sub create_account_sad : Tests {
             email       => 'milly@suntrup.net',
             account_type_id   => 1337,
         },
-    })->status_is(400, "Fails to create an account with an invalid account_type");
+    })->status_is(400, "Fails to create an account with an invalid account_type")
       ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
 
     note("Create account fails when required attribute is missing.");
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon"
+                # Missing christian_name
+            },
+        },
+    })->status_is(400, "Fails to create an account with missing required attribute")
+      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
 
+    note("Create account fails when attribute is wrong type.");
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "Not a date",
+            },
+        },
+    })->status_is(400, "Fails to create an account with bad date type")
+      ->json_is('/error', 'EBADREQUEST', "Get EBADREQUEST");
+
+    note("TODO: test all the types, enum, date, boolean for validity here");
 
     note("TODO: test openapi validation");
 }
@@ -119,6 +154,8 @@ sub create_account_sad : Tests {
 sub create_account_happy : Tests {
     note("Create account works when logged in with admin account and all required fields are included");
     note("Create account works when logged in with privileged nonadmin account and all required fields are included");
+    note("Account exists and has attributes you'd expect");
+    note("Create account does not fail when you don't include nonrequired attributes");
 }
 
 
