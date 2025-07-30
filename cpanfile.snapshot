@@ -404,6 +404,109 @@ DISTRIBUTIONS
       Try::Tiny 0.07
       namespace::clean 0.24
       perl 5.008001
+  DBIx-Class-Candy-0.005004
+    pathname: W/WE/WESM/DBIx-Class-Candy-0.005004.tar.gz
+    provides:
+      DBIx::Class::Candy 0.005004
+      DBIx::Class::Candy::Exports 0.005004
+      DBIx::Class::Candy::ResultSet 0.005004
+    requirements:
+      DBIx::Class 0.08123
+      ExtUtils::MakeMaker 0
+      Lingua::EN::Inflect 0
+      MRO::Compat 0.11
+      Sub::Exporter 0.982
+      namespace::clean 0.18
+  DBIx-Class-Helpers-2.037000
+    pathname: W/WE/WESM/DBIx-Class-Helpers-2.037000.tar.gz
+    provides:
+      DBIx::Class::Helper::IgnoreWantarray 2.037000
+      DBIx::Class::Helper::JoinTable 2.037000
+      DBIx::Class::Helper::Random 2.037000
+      DBIx::Class::Helper::ResultClass::Tee 2.037000
+      DBIx::Class::Helper::ResultSet 2.037000
+      DBIx::Class::Helper::ResultSet::AutoRemoveColumns 2.037000
+      DBIx::Class::Helper::ResultSet::Bare 2.037000
+      DBIx::Class::Helper::ResultSet::CorrelateRelationship 2.037000
+      DBIx::Class::Helper::ResultSet::DateMethods1 2.037000
+      DBIx::Class::Helper::ResultSet::Errors 2.037000
+      DBIx::Class::Helper::ResultSet::Explain 2.037000
+      DBIx::Class::Helper::ResultSet::IgnoreWantarray 2.037000
+      DBIx::Class::Helper::ResultSet::Me 2.037000
+      DBIx::Class::Helper::ResultSet::NoColumns 2.037000
+      DBIx::Class::Helper::ResultSet::OneRow 2.037000
+      DBIx::Class::Helper::ResultSet::Random 2.037000
+      DBIx::Class::Helper::ResultSet::RemoveColumns 2.037000
+      DBIx::Class::Helper::ResultSet::ResultClassDWIM 2.037000
+      DBIx::Class::Helper::ResultSet::SearchOr 2.037000
+      DBIx::Class::Helper::ResultSet::SetOperations 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::AddColumns 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Columns 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Distinct 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::GroupBy 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::HRI 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::HasRows 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Limit 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::LimitedPage 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::OrderBy 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::OrderByMagic 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Page 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Prefetch 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::RemoveColumns 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::ResultsExist 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Rows 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Search 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Search::Base 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Search::Like 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Search::NotLike 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Search::NotNull 2.037000
+      DBIx::Class::Helper::ResultSet::Shortcut::Search::Null 2.037000
+      DBIx::Class::Helper::ResultSet::Union 2.037000
+      DBIx::Class::Helper::ResultSet::Util 2.037000
+      DBIx::Class::Helper::ResultSet::VirtualView 2.037000
+      DBIx::Class::Helper::Row::CleanResultSet 2.037000
+      DBIx::Class::Helper::Row::JoinTable 2.037000
+      DBIx::Class::Helper::Row::NumifyGet 2.037000
+      DBIx::Class::Helper::Row::OnColumnChange 2.037000
+      DBIx::Class::Helper::Row::OnColumnMissing 2.037000
+      DBIx::Class::Helper::Row::ProxyResultSetMethod 2.037000
+      DBIx::Class::Helper::Row::ProxyResultSetUpdate 2.037000
+      DBIx::Class::Helper::Row::RelationshipDWIM 2.037000
+      DBIx::Class::Helper::Row::SelfResultSet 2.037000
+      DBIx::Class::Helper::Row::StorageValues 2.037000
+      DBIx::Class::Helper::Row::SubClass 2.037000
+      DBIx::Class::Helper::Row::ToJSON 2.037000
+      DBIx::Class::Helper::Schema::DateTime 2.037000
+      DBIx::Class::Helper::Schema::DidYouMean 2.037000
+      DBIx::Class::Helper::Schema::GenerateSource 2.037000
+      DBIx::Class::Helper::Schema::LintContents 2.037000
+      DBIx::Class::Helper::Schema::QuoteNames 2.037000
+      DBIx::Class::Helper::Schema::Verifier 2.037000
+      DBIx::Class::Helper::Schema::Verifier::C3 2.037000
+      DBIx::Class::Helper::Schema::Verifier::ColumnInfo 2.037000
+      DBIx::Class::Helper::Schema::Verifier::Parent 2.037000
+      DBIx::Class::Helper::Schema::Verifier::RelationshipColumnName 2.037000
+      DBIx::Class::Helper::SubClass 2.037000
+      DBIx::Class::Helper::VirtualView 2.037000
+      DBIx::Class::Helpers 2.037000
+      DBIx::Class::Helpers::Util 2.037000
+    requirements:
+      Carp::Clan 6.04
+      DBIx::Class 0.0826
+      DBIx::Class::Candy 0.003001
+      DBIx::Introspector 0.001002
+      ExtUtils::MakeMaker 0
+      Lingua::EN::Inflect 0
+      List::Util 0
+      Module::Runtime 0
+      Moo 2
+      Safe::Isa 0
+      Sub::Exporter::Progressive 0.001006
+      Text::Brew 0
+      Try::Tiny 0
+      namespace::clean 0.23
+      parent 0
   DBIx-Class-Schema-Loader-0.07053
     pathname: V/VE/VEESH/DBIx-Class-Schema-Loader-0.07053.tar.gz
     provides:
@@ -471,6 +574,14 @@ DISTRIBUTIONS
       curry 1.000000
       namespace::clean 0.23
       perl 5.008001
+  DBIx-Introspector-0.001005
+    pathname: F/FR/FREW/DBIx-Introspector-0.001005.tar.gz
+    provides:
+      DBIx::Introspector 0.001005
+    requirements:
+      DBI 1.628
+      ExtUtils::MakeMaker 0
+      Moo 1.003001
   Data-Dump-1.25
     pathname: G/GA/GARU/Data-Dump-1.25.tar.gz
     provides:
@@ -496,6 +607,18 @@ DISTRIBUTIONS
       Exporter 0
       ExtUtils::MakeMaker 0
       perl 5.006
+  Data-OptList-0.114
+    pathname: R/RJ/RJBS/Data-OptList-0.114.tar.gz
+    provides:
+      Data::OptList 0.114
+    requirements:
+      ExtUtils::MakeMaker 6.78
+      List::Util 0
+      Params::Util 0
+      Sub::Install 0.921
+      perl 5.012
+      strict 0
+      warnings 0
   Devel-GlobalDestruction-0.14
     pathname: H/HA/HAARG/Devel-GlobalDestruction-0.14.tar.gz
     provides:
@@ -1255,6 +1378,22 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       warnings 0
+  Params-Util-1.102
+    pathname: R/RE/REHSACK/Params-Util-1.102.tar.gz
+    provides:
+      Params::Util 1.102
+      Params::Util::PP 1.102
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      File::Basename 0
+      File::Copy 0
+      File::Path 0
+      File::Spec 0
+      IPC::Cmd 0
+      Scalar::Util 1.18
+      XSLoader 0.22
+      parent 0
   Path-Class-0.37
     pathname: K/KW/KWILLIAMS/Path-Class-0.37.tar.gz
     provides:
@@ -1342,6 +1481,15 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
+  Safe-Isa-1.000010
+    pathname: E/ET/ETHER/Safe-Isa-1.000010.tar.gz
+    provides:
+      Safe::Isa 1.000010
+    requirements:
+      Exporter 5.57
+      ExtUtils::MakeMaker 0
+      Scalar::Util 0
+      perl 5.006
   Scope-Guard-0.21
     pathname: C/CH/CHOCOLATE/Scope-Guard-0.21.tar.gz
     provides:
@@ -1385,12 +1533,38 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       warnings 0
+  Sub-Exporter-0.991
+    pathname: R/RJ/RJBS/Sub-Exporter-0.991.tar.gz
+    provides:
+      Sub::Exporter 0.991
+      Sub::Exporter::Util 0.991
+    requirements:
+      Carp 0
+      Data::OptList 0.100
+      ExtUtils::MakeMaker 6.78
+      Params::Util 0.14
+      Sub::Install 0.92
+      perl 5.012
+      strict 0
+      warnings 0
   Sub-Exporter-Progressive-0.001013
     pathname: F/FR/FREW/Sub-Exporter-Progressive-0.001013.tar.gz
     provides:
       Sub::Exporter::Progressive 0.001013
     requirements:
       ExtUtils::MakeMaker 0
+  Sub-Install-0.929
+    pathname: R/RJ/RJBS/Sub-Install-0.929.tar.gz
+    provides:
+      Sub::Install 0.929
+    requirements:
+      B 0
+      Carp 0
+      ExtUtils::MakeMaker 6.78
+      Scalar::Util 0
+      perl 5.008000
+      strict 0
+      warnings 0
   Sub-Name-0.28
     pathname: E/ET/ETHER/Sub-Name-0.28.tar.gz
     provides:
@@ -1788,6 +1962,13 @@ DISTRIBUTIONS
       Test::Builder 0.13
       Test::Builder::Tester 1.02
       perl 5.006
+  Text-Brew-0.02
+    pathname: K/KC/KCIVEY/Text-Brew-0.02.tar.gz
+    provides:
+      Text::Brew 0.02
+    requirements:
+      ExtUtils::MakeMaker 0
+      Test::More 0
   Text-German-0.06
     pathname: U/UL/ULPFR/Text-German-0.06.tar.gz
     provides:

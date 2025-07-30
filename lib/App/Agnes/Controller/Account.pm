@@ -30,16 +30,8 @@ sub get_accounts {
 sub create_account {
     my $c = shift;
 
-    #unless ($c->current_account->has_permission('CREATE_ACCOUNT')) {
-    #    return $c->render(
-    #        json => {
-    #            'error' => 'ENOTAUTHORIZED',
-    #        },
-    #        status => 403,
-    #    );
-    #}
-
     my $data = $c->req->json;
+
     my $res = BizAccount->create_account(account         => $data->{account},
                                          current_account => $c->current_account);
     if ($res->err) {

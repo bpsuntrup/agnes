@@ -146,6 +146,7 @@ sub create_account_sad : Tests {
     })->status_is(400, "Fails to create an account with bad date type")
       ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
 
+    note("TODO: test that you can't create a user with the same username");
     note("TODO: test all the types, enum, date, boolean for validity here");
 
     note("TODO: test openapi validation");

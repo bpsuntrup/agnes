@@ -93,6 +93,8 @@ use aliased 'App::Agnes::Model';
 use DBI;
 
 __PACKAGE__->many_to_many(roles => 'account_roles', 'role');
+__PACKAGE__->resultset_class('App::Agnes::Schema::ResultSet::Accounts');
+#__PACKAGE__->has_many(attributes => 'account_type', 'account_type_attributes', 'attributes');
 
 sub has_permission {
     my ($self, $perm) = @_;

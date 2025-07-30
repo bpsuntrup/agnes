@@ -10,6 +10,7 @@ requires 'DBIx::Class';
 requires 'DBIx::Class::Schema::Loader';
 requires 'Mojolicious::Plugin::OpenAPI';
 requires 'Object::Pad';
+requires 'DBIx::Class::Helper::ResultSet::Shortcut';
 
 on 'test' => sub {
   requires 'Test::More';

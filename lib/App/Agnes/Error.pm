@@ -19,6 +19,9 @@ our %ERROR_TO_HTTP = (
 
     # invalid data in request body
     EBADREQUEST => 400,
+
+    # Username is taken, etc.
+    ECONFLICT => 409,
 );
 
 sub error_code_to_http {
