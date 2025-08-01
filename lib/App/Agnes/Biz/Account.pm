@@ -5,6 +5,7 @@ use warnings;
 
 use base 'App::Agnes::Biz';
 use aliased 'App::Agnes::Model';
+use aliased 'App::Agnes::Biz::Attribute';
 
 sub create_account {
     my $self = shift;
@@ -55,7 +56,22 @@ sub create_account {
     }
 
     # Check attributes
-    my $attributes_rs = $at->attributes;
+    #   * every required attribute is provided
+    #   * every attribute is the correct type
+    my @account_type_attributes = $at->account_type_attributes->search({},{ prefetch => 'attribute' })->all;
+    for my $ata (@account_type_attributes) {
+        my $name = $ata->attribute->name;
+        my $type = $ata->attribute->type;
+        my $attr = $account->{attributes}{$name};
+        if ($ata->required && !defined($attr)) {
+            return BizResult->new(err => 'EBADREQUEST', msg => "Missing required attribute '$name'.");
+        }
+
+        my $is_valid = Attribute->is_valid_type( type => $type, attr => $attr);
+        if ($is_valid) {
+            return BizResult->new(err => 'EBADREQUEST', msg => "Attribute '$name' of type '$type' is invalid");
+        }
+    }
 
     my %account = (
         username        => $account->{username},
