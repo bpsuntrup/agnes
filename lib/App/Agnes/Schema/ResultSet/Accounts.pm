@@ -6,8 +6,11 @@ use warnings;
 use base 'DBIx::Class::ResultSet';
 
 
-sub name_available {
-    return 1;
+sub username_available {
+    my $self = shift;
+    my $username = shift;
+
+    return $self->find({ username => $username }) ? 0 : 1;
 }
 
 

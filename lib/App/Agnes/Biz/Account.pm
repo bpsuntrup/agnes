@@ -27,8 +27,8 @@ sub create_account {
     unless ($username =~ /[A-Za-z_][A-Za-z_0-9]*/) {
         return BizResult->new(err => "EBADREQUEST", msg => "Username is invalid.");
     }
-    unless (Model->rs('Account')->name_available($account->{username})) {
-        return BizResult->new(err => "ECONFLICT", msg => "Username ($username) is taken already.");
+    unless (Model->rs('Account')->username_available($account->{username})) {
+        return BizResult->new(err => "ECONFLICT", msg => "Username ($username) is already in use.");
     }
 
     # Validate password
