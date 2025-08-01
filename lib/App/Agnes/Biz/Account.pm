@@ -68,7 +68,7 @@ sub create_account {
         }
 
         my $is_valid = Attribute->is_valid_type( type => $type, attr => $attr);
-        if ($is_valid) {
+        unless ($is_valid) {
             return BizResult->new(err => 'EBADREQUEST', msg => "Attribute '$name' of type '$type' is invalid");
         }
     }

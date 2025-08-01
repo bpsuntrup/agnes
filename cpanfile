@@ -11,6 +11,9 @@ requires 'DBIx::Class::Schema::Loader';
 requires 'Mojolicious::Plugin::OpenAPI';
 requires 'Object::Pad';
 requires 'DBIx::Class::Helper::ResultSet::Shortcut';
+requires 'DateTime::Format::Strptime';
+requires 'JSON::Parse';
+requires 'List::Util';
 
 on 'test' => sub {
   requires 'Test::More';

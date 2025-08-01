@@ -38,7 +38,7 @@ sub create_account {
         return $c->render_error(err => $res->err, msg => $res->msg);
     }
 
-    return $c->render(text => "OK", status => 200);
+    return $c->render(json => $res->res, status => 200);
 }
 
 1;

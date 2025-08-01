@@ -144,9 +144,28 @@ sub create_account_sad : Tests {
             },
         },
     })->status_is(400, "Fails to create an account with bad date type")
-      ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
+      ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST")
+      ->json_like('/msg', qr/invalid/, "Get invalid message");
 
     note("TODO: test that you can't create a user with the same username");
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "mary",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(409, "Fails to create account with existing username")
+      ->json_is('/err', 'ECONFLICT', "Get ECONFLICT error code")
+      ->json_like('/msg', qr/already in use/, "Get proper message");
+
     note("TODO: test all the types, enum, date, boolean for validity here");
 
     note("TODO: test openapi validation");
