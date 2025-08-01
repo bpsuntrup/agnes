@@ -59,6 +59,8 @@ sub create_account {
     #   * every required attribute is provided
     #   * every attribute is the correct type
     my @account_type_attributes = $at->account_type_attributes->search({},{ prefetch => 'attribute' })->all;
+    my $account_attributes;
+    my %valid_attributes;
     for my $ata (@account_type_attributes) {
         my $name = $ata->attribute->name;
         my $type = $ata->attribute->type;
@@ -71,6 +73,23 @@ sub create_account {
         unless ($is_valid) {
             return BizResult->new(err => 'EBADREQUEST', msg => "Attribute '$name' of type '$type' is invalid");
         }
+        $valid_attributes{$name} = $ata->attribute_id;
+    }
+
+    # Check no other attributes are added:
+    my @attrs_to_add;
+    for my $attr (keys %{$account->{attributes}}){
+        unless ($valid_attributes{$attr}) {
+            return BizResult->new(
+                err => 'EBADREQUEST',
+                msg => "Attribute '$attr' is not supported for account type (" . $at->name . ")."
+            );
+        }
+
+        push @attrs_to_add, {
+            attribute_id => $valid_attributes{$attr},
+            value        => $account->{attributes}{$attr},
+        };
     }
 
     my %account = (
@@ -82,9 +101,12 @@ sub create_account {
         account_type_id => $account->{account_type_id},
     );
 
-    my $res = Model->rs('Account')->create(\%account);
+    my $res_account = Model->rs('Account')->create(\%account);
+    my $id = $res_account->account_id;
 
-    return BizResult->new(res => $res);
+    Model->rs('AccountAttribute')->populate([ map { { %$_, account_id => $id } } @attrs_to_add ]);
+
+    return BizResult->new(res => {account_id => $id});
 }
 
 1;

@@ -194,6 +194,7 @@ sub create_account_happy : Tests {
             },
         },
     })->status_is(200, "Can create user with admin account");
+    $t->app->log->level('debug');
     my $milly = Model->rs('Account')->find({ username => "mildred" }, {
         prefetch => {
             account_attributes => 'attribute'
@@ -208,8 +209,6 @@ sub create_account_happy : Tests {
     );
     my $atts = $milly->attributes;
     is_deeply(\%attributes, $atts, "Save attributes properly.");
-
-    note("TODO: Account exists and has attributes you'd expect");
 
     $t->post_ok('/login' => form => {
         username => "joe",
@@ -232,8 +231,11 @@ sub create_account_happy : Tests {
             },
         },
     })->status_is(200, "Can create user with nonadmin privileged account");
+    my $edmund = Model->rs('Account')->find({ username => "edmund" });
+    @attributes = $milly->attributes;
+    $atts = $edmund->attributes;
+    is_deeply(\%attributes, $atts, "Save attributes properly.");
 
-    note("TODO: Account exists and has attributes you'd expect");
     note("TODO: Create account does not fail when you don't include nonrequired attributes");
 }
 
