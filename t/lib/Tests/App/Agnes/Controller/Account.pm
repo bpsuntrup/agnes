@@ -67,8 +67,8 @@ sub create_account_sad : Tests {
 
     note("Create account fails when logged in with non-admin account.");
     $t->post_ok('/login' => form => {
-        username => "joe",
-        password => "pass2",
+        username => "john",
+        password => "pass3",
     })->status_is(302);
     $t->post_ok("/api/v1/accounts" => json => {
         account => {
@@ -173,9 +173,68 @@ sub create_account_sad : Tests {
 
 sub create_account_happy : Tests {
     note("Create account works when logged in with admin account and all required fields are included");
-    note("Create account works when logged in with privileged nonadmin account and all required fields are included");
-    note("Account exists and has attributes you'd expect");
-    note("Create account does not fail when you don't include nonrequired attributes");
+    my $t = Test::Mojo->new('App::Agnes');
+
+    $t->post_ok('/login' => form => {
+        username => "mary",
+        password => "pass1",
+    }, "Login with admin account");
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(200, "Can create user with admin account");
+    my $milly = Model->rs('Account')->find({ username => "mildred" }, {
+        prefetch => {
+            account_attributes => 'attribute'
+        }
+    });
+    is($milly->displayname, "Mildred Suntrup", "Column name stored correctly");
+    my @attributes = $milly->attributes;
+    my %attributes = (
+        fav_book => "Goodnight Moon",
+        christian_name => "Mildred",
+        reception_date => "1990-01-01",
+    );
+    my $atts = $milly->attributes;
+    is_deeply(\%attributes, $atts, "Save attributes properly.");
+
+    note("TODO: Account exists and has attributes you'd expect");
+
+    $t->post_ok('/login' => form => {
+        username => "joe",
+        password => "pass2",
+    }, "Login with nonadmin privileged account");
+    ok(Model->rs('Account')->find({ username => 'joe' })->has_permission("CREATE_ACCOUNT"),
+       "User has permission CREATE_ACCOUNT");
+    $t->post_ok("/api/v1/accounts" => json => {
+        account => {
+            username    => "edmund",
+            password    => "edmundpass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(200, "Can create user with nonadmin privileged account");
+
+    note("TODO: Account exists and has attributes you'd expect");
+    note("TODO: Create account does not fail when you don't include nonrequired attributes");
 }
 
 

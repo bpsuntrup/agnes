@@ -94,15 +94,21 @@ use DBI;
 
 __PACKAGE__->many_to_many(roles => 'account_roles', 'role');
 __PACKAGE__->resultset_class('App::Agnes::Schema::ResultSet::Accounts');
-#__PACKAGE__->has_many(attributes => 'account_type', 'account_type_attributes', 'attributes');
 
-sub has_permission {
-    my ($self, $perm) = @_;
-    return 1 if $self->is_admin;
+sub attributes {
+    my $self = shift;
+    my %atts = ();
+    my @account_attributes = $self->account_attributes->search({},{ join => 'attribute' })->all;
+    for my $att (@account_attributes) {
+        $atts{$att->attribute->name} = $att->value;
+    }
+    return \%atts;
+}
 
+sub permissions_rs {
+    my $self = shift;
     return Model->rs('Permission')->search({
         'account.account_id' => $self->account_id,
-        'me.permission' => $perm
     },{
         join => {
             role_permissions => {
@@ -111,7 +117,13 @@ sub has_permission {
                 },
             },
         },
-    })->count;
+    });
+}
+
+sub has_permission {
+    my ($self, $perm) = @_;
+    return 1 if $self->is_admin;
+    return $self->permissions_rs->count;
 }
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

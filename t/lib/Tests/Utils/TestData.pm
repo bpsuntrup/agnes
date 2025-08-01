@@ -63,6 +63,17 @@ sub add_test_accounts {
         FROM accounts
         JOIN roles ON accounts.username = 'joe' AND roles.name = 'bishop'
     ");
+    $self->{dbh}->do("
+        INSERT INTO role_permissions
+        (role_id, permission_id)
+        SELECT roles.role_id,
+               permissions.permission_id
+        FROM permissions
+        CROSS JOIN roles
+        WHERE
+        (permissions.permission='CREATE_ACCOUNT' AND roles.name = 'bishop')
+    ");
+
     # Add required attributes
     $self->{dbh}->do(" 
         INSERT INTO account_type_attributes
