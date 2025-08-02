@@ -9,6 +9,7 @@ use Test::More;
 use Test::Mojo;
 
 sub test_normal_login : Tests {
+    my $self = shift;
     my $t = Test::Mojo->new('App::Agnes');
 
     note("Test login without cookie.");
@@ -18,8 +19,9 @@ sub test_normal_login : Tests {
 
     note("Test logging in by getting cookie.");
     $t->post_ok('/login' => form => {
-        username => "mary",
-        password => "pass1",
+        username  => "mary",
+        password  => "pass1",
+        tenant_id => $self->tenant_id(),
     })->status_is(302)
       ->header_like('Set-Cookie' => qr/mojolicious=/, 'Normal login sets session cookie');
 

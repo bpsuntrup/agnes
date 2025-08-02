@@ -10,6 +10,11 @@ use DBI;
 use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 
+sub tenant_id {
+    return Tests::Utils::TestData::tenant_id();
+}
+
+
 sub set_up_db : Test(startup) {
     # Create database:
     my $dbh = DBI->connect("dbi:Pg:dbname=postgres"); # TODO: set up test_runneraccount 

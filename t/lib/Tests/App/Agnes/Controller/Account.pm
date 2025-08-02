@@ -50,6 +50,7 @@ use Mojo::JSON qw/to_json/;
 #}
 
 sub create_account_sad : Tests {
+    my $self = shift;
     my $t = Test::Mojo->new('App::Agnes');
 
     note("Create account should fail when not logged in.");
@@ -69,6 +70,7 @@ sub create_account_sad : Tests {
     $t->post_ok('/login' => form => {
         username => "john",
         password => "pass3",
+        tenant_id => $self->tenant_id(),
     })->status_is(302);
     $t->post_ok("/api/v1/accounts" => json => {
         account => {
@@ -87,6 +89,7 @@ sub create_account_sad : Tests {
     $t->post_ok('/login' => form => {
         username => "mary",
         password => "pass1",
+        tenant_id => $self->tenant_id(),
     })->status_is(302);
     $t->get_ok("/login")->status_is(200)->content_like(qr/mary/);
     $t->post_ok("/api/v1/accounts" => json => {
@@ -172,12 +175,14 @@ sub create_account_sad : Tests {
 }
 
 sub create_account_happy : Tests {
+    my $self = shift;
     note("Create account works when logged in with admin account and all required fields are included");
     my $t = Test::Mojo->new('App::Agnes');
 
     $t->post_ok('/login' => form => {
         username => "mary",
         password => "pass1",
+        tenant_id => $self->tenant_id(),
     }, "Login with admin account");
     $t->post_ok("/api/v1/accounts" => json => {
         account => {
@@ -201,6 +206,7 @@ sub create_account_happy : Tests {
         }
     });
     is($milly->displayname, "Mildred Suntrup", "Column name stored correctly");
+    isnt("millypass1", $milly->password, "Password isn't stored in database");
     my @attributes = $milly->attributes;
     my %attributes = (
         fav_book => "Goodnight Moon",
@@ -213,6 +219,7 @@ sub create_account_happy : Tests {
     $t->post_ok('/login' => form => {
         username => "joe",
         password => "pass2",
+        tenant_id => $self->tenant_id(),
     }, "Login with nonadmin privileged account");
     ok(Model->rs('Account')->find({ username => 'joe' })->has_permission("CREATE_ACCOUNT"),
        "User has permission CREATE_ACCOUNT");
@@ -232,7 +239,8 @@ sub create_account_happy : Tests {
         },
     })->status_is(200, "Can create user with nonadmin privileged account");
     my $edmund = Model->rs('Account')->find({ username => "edmund" });
-    @attributes = $milly->attributes;
+    isnt("edmundpass1", $edmund->password, "Password is not saved in DB.");
+    @attributes = $edmund->attributes;
     $atts = $edmund->attributes;
     is_deeply(\%attributes, $atts, "Save attributes properly.");
 

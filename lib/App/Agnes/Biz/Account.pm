@@ -14,9 +14,7 @@ sub create_account {
     my $account = $params{account};
 
     # Check perm
-    my $permission = Model->rs("Account")
-         ->find({username => $current_account})
-         ->has_permission('CREATE_ACCOUNT');
+    my $permission = $current_account->has_permission('CREATE_ACCOUNT');
 
     unless ($permission) {
         return BizResult->new(err => 'ENOTAUTHORIZED');
@@ -99,6 +97,7 @@ sub create_account {
         birthdate       => $account->{birthdate},
         email           => $account->{email},
         account_type_id => $account->{account_type_id},
+        tenant_id       => $current_account->tenant_id,
     );
 
     my $res_account = Model->rs('Account')->create(\%account);

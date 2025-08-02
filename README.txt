@@ -94,3 +94,54 @@ user_attributes
 * value
 
 user
+
+idea for GET /accounts query language:
+
+just like lisp, but with JSON list syntax instead of s expressions.
+
+boolean variable: b1, b2, ...
+property:         a1, a2, ... (representing either a column on accounts or an account_attribute)
+value :           v1, v2, ...
+
+(and b1 b2 b3 ...)  -> boolean
+(or b1 b2 b3 ...)   -> boolean
+(not b1)            -> boolean
+(in a1 (v1 v2 ...)) -> boolean
+(is a1 v1)          -> boolean
+(like a1 v1)        -> boolean
+(starts_with a1 v1) -> boolean
+(ends_with a1 v1)   -> boolean
+(col v1)            -> property (accounts.v1, subject to validation)
+(attr v1)           -> property (accounts->account_attributes->attributes, subject to valid.)
+(prop type)         -> property (account_types.name)
+"json string"       -> value
+
+
+Full query:
+{
+    "where":
+    [ "and",
+        ["like", ["attr", "First Name"], "Ben"],
+        ["is", ["prop", "type"], "catechumen"],
+        ["or",
+            ["is", ["prop", "space_member"], "Annunciation"],
+            ["is", ["prop", "space_member"], "Assumption"],
+        ]
+    ],
+}
+Possibly, with optional other top level queries parameters next to "where" like:
+* "page_size" (integer)
+* "page"     (integer)
+{
+    "where": ["like", ["attr", "Last Name"], "Sun%"],
+    "page": 1,
+    "page_size": 50,
+    "sort": [
+        ["attr", "First Name"],
+        ["col", "birthdate"],
+    ],
+}
+
+These attributes should only be valid if:
+They are real attributes in the database
+They are public. I should add privacy settings and check those.

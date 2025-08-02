@@ -32,8 +32,18 @@ sub startup {
     $self->helper( current_account => sub {
         my $c = shift;
 
-        # TODO: support backend sessions
-        return  $c->session('username');
+        my $ca;
+        if ($ca = $c->stash('current_account')) {
+            return $ca;
+        }
+        else {
+            $ca = Model->rs('Account')->find({
+                username => $c->session('username'),
+                tenant_id => $c->session('tenant_id'),
+            });
+            $c->stash('current_account', $ca);
+            return $ca
+        }
     });
 
     $self->helper( schema => sub {

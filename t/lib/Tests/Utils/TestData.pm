@@ -14,34 +14,48 @@ sub new {
     }, $class;
 }
 
+our $TENANT_ID;
+
+sub tenant_id {
+    return $TENANT_ID;
+}
+
 sub add_test_accounts {
     my $self = shift;
     $self->{dbh}->do("
-        INSERT INTO account_types
+        INSERT INTO tenants
         (name)
         VALUES
-        ('faithful'),
-        ('priest'),
-        ('bishop'),
-        ('has_required_attrs'),
-        ('no_required_attrs')
+        ('test_tenant_1')
+    ");
+    my $t_id = $self->{dbh}->selectrow_array(" SELECT tenant_id from tenants where name = 'test_tenant_1'");
+    $TENANT_ID = $t_id;
+    $self->{dbh}->do("
+        INSERT INTO account_types
+        (name, tenant_id)
+        VALUES
+        ('faithful', '$t_id'),
+        ('priest', '$t_id'),
+        ('bishop', '$t_id'),
+        ('has_required_attrs', '$t_id'),
+        ('no_required_attrs', '$t_id')
     ");
     $self->{dbh}->do("
         INSERT INTO accounts
-        ( username ,password ,account_type_id, is_admin )
+        ( username ,password ,account_type_id, is_admin, tenant_id)
         VALUES
-        ( 'mary', 'pass1', 1, true),  -- admin
-        ( 'joe',  'pass2', 2, false), -- highly privileged non admin
-        ( 'john', 'pass3', 3, false)  -- no privs
+        ( 'mary', 'pass1', 1, true, '$t_id'),  -- admin
+        ( 'joe',  'pass2', 2, false, '$t_id'), -- highly privileged non admin
+        ( 'john', 'pass3', 3, false, '$t_id')  -- no privs
     ");
-    $self->{dbh}->do(q{
+    $self->{dbh}->do(qq{
         INSERT INTO attributes
-        (name, type)
+        (name, type, tenant_id)
         VALUES
-        ('reception_date', 'date'),
-        ('marital_status', 'enum("married", "unmarried")'),
-        ('christian_name', 'text'),
-        ('fav_book', 'text')
+        ('reception_date', 'date', '$t_id'),
+        ('marital_status', 'enum("married", "unmarried")', '$t_id'),
+        ('christian_name', 'text', '$t_id'),
+        ('fav_book', 'text', '$t_id')
     });
     $self->{dbh}->do("
         INSERT INTO permissions
@@ -51,9 +65,9 @@ sub add_test_accounts {
         ");
     $self->{dbh}->do("
         INSERT INTO roles
-        (name)
+        (name, tenant_id)
         VALUES
-        ('bishop')
+        ('bishop', '$t_id')
     ");
     $self->{dbh}->do("
         INSERT INTO account_roles

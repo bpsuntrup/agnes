@@ -78,3 +78,29 @@ posts
 
 files
 ...
+
+Order of development:
+
+The order of this app's development shall proceed in the form of a story.
+
+When you set a new tenant up, you manually add a tenants row, account_types row, and an accounts
+row to the database with is_admin set to 1.
+
+That's all that's needed to exercise all of the rest of the functionality of the app.
+
+Therefore, I want my full integration test to start with those three rows, and then proceed to
+exercise the entire app by doing the following, which is also the order in which I will 
+develop the app:
+
+* login
+* create user
+* create space
+* get users GET /accounts?query='attribute_name (like, is, in) (value/s) (and/or), etc.
+* get spaces GET /spaces?query='something'
+* add user to space PUT /accounts/<account_id>/spaces/<space_id>
+* get spaces (belonging to user) GET /accounts/<id>/spaces
+* create post POST /spaces/<space_id>/posts
+* create reactions POST /posts/<post_id>/reactions
+* get posts GET /spaces/<space_id>/posts
+
+

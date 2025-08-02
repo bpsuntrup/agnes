@@ -12,15 +12,17 @@ sub login_now {
     my $self = shift;
     my $username = $self->param('username');
     my $password = $self->param('password');
+    my $tenant_id = $self->param('tenant_id');
 
-    my $account = Model->schema->resultset('Account')->search({
+    my $account = Model->schema->resultset('Account')->find({
         username => $username,
-    })->first;
-
+        tenant_id => $tenant_id,
+    });
 
     # TODO: replace with real auth
     if ($password eq $account->password) {
         $self->session(username => $username);
+        $self->session(tenant_id => $tenant_id);
 
         return $self->redirect_to('/'); # TODO: redirect to app
     }
@@ -73,7 +75,7 @@ sub login_api {
 sub login_ok {
     my $c = shift;
     return $c->render(
-        text => 'OK' . $c->current_account,
+        text => 'OK' . $c->current_account->username,
         status => 200,
     );
 }
