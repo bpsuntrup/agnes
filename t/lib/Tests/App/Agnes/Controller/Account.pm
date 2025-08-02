@@ -147,7 +147,6 @@ sub create_account_sad : Tests {
       ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST")
       ->json_like('/msg', qr/invalid/, "Get invalid message");
 
-    note("TODO: test that you can't create a user with the same username");
     $t->post_ok("/api/v1/accounts" => json => {
         account => {
             username    => "mary",
@@ -167,6 +166,7 @@ sub create_account_sad : Tests {
       ->json_like('/msg', qr/already in use/, "Get proper message");
 
     note("TODO: test all the types, enum, date, boolean for validity here");
+    note("TODO: test that you can't create an account with extra attributes not belonging to the account_type");
 
     note("TODO: test openapi validation");
 }

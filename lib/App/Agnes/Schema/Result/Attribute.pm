@@ -24,6 +24,7 @@ __PACKAGE__->add_columns(
   },
 );
 __PACKAGE__->set_primary_key("attribute_id");
+__PACKAGE__->add_unique_constraint("attributes_uk_name", ["name"]);
 __PACKAGE__->has_many(
   "account_attributes",
   "App::Agnes::Schema::Result::AccountAttribute",
@@ -38,8 +39,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jFW3SeyKBKEUfzG9XvuT/Q
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 19:51:36
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IYWktU++OTQybCkEeN/vug
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
