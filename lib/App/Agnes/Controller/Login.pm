@@ -6,6 +6,7 @@ use warnings;
 use Mojo::Base 'Mojolicious::Controller';
 
 use aliased 'App::Agnes::Model';
+use aliased 'App::Agnes::Biz::Password';
 
 # POST /login
 sub login_now {
@@ -20,7 +21,7 @@ sub login_now {
     });
 
     # TODO: replace with real auth
-    if ($password eq $account->password) {
+    if (Password->check_hash(hash => $account->password, password => $password)) {
         $self->session(username => $username);
         $self->session(tenant_id => $tenant_id);
 

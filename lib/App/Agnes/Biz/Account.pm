@@ -6,6 +6,7 @@ use warnings;
 use base 'App::Agnes::Biz';
 use aliased 'App::Agnes::Model';
 use aliased 'App::Agnes::Biz::Attribute';
+use aliased 'App::Agnes::Biz::Password';
 
 sub create_account {
     my $self = shift;
@@ -92,7 +93,7 @@ sub create_account {
 
     my %account = (
         username        => $account->{username},
-        password        => $account->{password},
+        password        => Password->enhashen(password => $account->{password}),
         displayname     => $account->{displayname},
         birthdate       => $account->{birthdate},
         email           => $account->{email},

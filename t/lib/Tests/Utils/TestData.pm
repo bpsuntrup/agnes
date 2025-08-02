@@ -7,6 +7,8 @@ $td->add_test_accounts;
 
 =cut
 
+use aliased 'App::Agnes::Biz::Password';
+
 sub new {
     my ($class, $dbh) = @_;
     return bless {
@@ -40,13 +42,16 @@ sub add_test_accounts {
         ('has_required_attrs', '$t_id'),
         ('no_required_attrs', '$t_id')
     ");
+    my $pass1 = Password->enhashen(password => 'pass1');
+    my $pass2 = Password->enhashen(password => 'pass2');
+    my $pass3 = Password->enhashen(password => 'pass3');
     $self->{dbh}->do("
         INSERT INTO accounts
         ( username ,password ,account_type_id, is_admin, tenant_id)
         VALUES
-        ( 'mary', 'pass1', 1, true, '$t_id'),  -- admin
-        ( 'joe',  'pass2', 2, false, '$t_id'), -- highly privileged non admin
-        ( 'john', 'pass3', 3, false, '$t_id')  -- no privs
+        ( 'mary', '$pass1', 1, true, '$t_id'),  -- admin
+        ( 'joe',  '$pass2', 2, false, '$t_id'), -- highly privileged non admin
+        ( 'john', '$pass3', 3, false, '$t_id')  -- no privs
     ");
     $self->{dbh}->do(qq{
         INSERT INTO attributes

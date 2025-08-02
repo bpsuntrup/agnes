@@ -26,6 +26,18 @@ DISTRIBUTIONS
       perl 5.006001
       strict 0
       warnings 0
+  B-Hooks-OP-Check-0.22
+    pathname: E/ET/ETHER/B-Hooks-OP-Check-0.22.tar.gz
+    provides:
+      B::Hooks::OP::Check 0.22
+    requirements:
+      DynaLoader 0
+      ExtUtils::Depends 0.302
+      ExtUtils::MakeMaker 0
+      parent 0
+      perl 5.008001
+      strict 0
+      warnings 0
   Carp-Clan-6.08
     pathname: E/ET/ETHER/Carp-Clan-6.08.tar.gz
     provides:
@@ -175,6 +187,32 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  Crypt-PBKDF2-0.161520
+    pathname: A/AR/ARODLAND/Crypt-PBKDF2-0.161520.tar.gz
+    provides:
+      Crypt::PBKDF2 0.161520
+      Crypt::PBKDF2::Hash 0.161520
+      Crypt::PBKDF2::Hash::DigestHMAC 0.161520
+      Crypt::PBKDF2::Hash::HMACSHA1 0.161520
+      Crypt::PBKDF2::Hash::HMACSHA2 0.161520
+      Crypt::PBKDF2::Hash::HMACSHA3 0.161520
+    requirements:
+      Carp 0
+      Digest 1.16
+      Digest::HMAC 1.01
+      Digest::SHA 0
+      Digest::SHA3 0.22
+      ExtUtils::MakeMaker 0
+      MIME::Base64 0
+      Module::Runtime 0
+      Moo 2
+      Moo::Role 2
+      Scalar::Util 0
+      Try::Tiny 0.04
+      Type::Tiny 0
+      Types::Standard 1.000005
+      namespace::autoclean 0
+      strictures 2
   DBD-Pg-3.18.0
     pathname: T/TU/TURNSTEP/DBD-Pg-3.18.0.tar.gz
     provides:
@@ -1105,6 +1143,24 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  Digest-HMAC-1.05
+    pathname: A/AR/ARODLAND/Digest-HMAC-1.05.tar.gz
+    provides:
+      Digest::HMAC 1.05
+      Digest::HMAC_MD5 1.05
+      Digest::HMAC_SHA1 1.05
+    requirements:
+      Digest::MD5 2
+      Digest::SHA 1
+      ExtUtils::MakeMaker 0
+      perl 5.008001
+  Digest-SHA3-1.05
+    pathname: M/MS/MSHELOR/Digest-SHA3-1.05.tar.gz
+    provides:
+      Digest::SHA3 1.05
+    requirements:
+      ExtUtils::MakeMaker 0
+      perl 5.003
   Dist-CheckConflicts-0.11
     pathname: D/DO/DOY/Dist-CheckConflicts-0.11.tar.gz
     provides:
@@ -1155,6 +1211,14 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       warnings 0
+  Exporter-Tiny-1.006002
+    pathname: T/TO/TOBYINK/Exporter-Tiny-1.006002.tar.gz
+    provides:
+      Exporter::Shiny 1.006002
+      Exporter::Tiny 1.006002
+    requirements:
+      ExtUtils::MakeMaker 6.17
+      perl 5.006001
   ExtUtils-CChecker-0.12
     pathname: P/PE/PEVANS/ExtUtils-CChecker-0.12.tar.gz
     provides:
@@ -1175,6 +1239,16 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  ExtUtils-Depends-0.8002
+    pathname: E/ET/ETJ/ExtUtils-Depends-0.8002.tar.gz
+    provides:
+      ExtUtils::Depends 0.8002
+    requirements:
+      Data::Dumper 0
+      ExtUtils::MakeMaker 7.44
+      File::Spec 0
+      IO::File 0
+      perl 5.006
   ExtUtils-Helpers-0.028
     pathname: L/LE/LEONT/ExtUtils-Helpers-0.028.tar.gz
     provides:
@@ -2669,6 +2743,64 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  Type-Tiny-2.008002
+    pathname: T/TO/TOBYINK/Type-Tiny-2.008002.tar.gz
+    provides:
+      Devel::TypeTiny::Perl58Compat 2.008002
+      Error::TypeTiny 2.008002
+      Error::TypeTiny::Assertion 2.008002
+      Error::TypeTiny::Compilation 2.008002
+      Error::TypeTiny::WrongNumberOfParameters 2.008002
+      Eval::TypeTiny 2.008002
+      Eval::TypeTiny::CodeAccumulator 2.008002
+      Reply::Plugin::TypeTiny 2.008002
+      Test::TypeTiny 2.008002
+      Type::Coercion 2.008002
+      Type::Coercion::FromMoose 2.008002
+      Type::Coercion::Union 2.008002
+      Type::Library 2.008002
+      Type::Params 2.008002
+      Type::Params::Alternatives 2.008002
+      Type::Params::Parameter 2.008002
+      Type::Params::Signature 2.008002
+      Type::Parser 2.008002
+      Type::Parser::AstBuilder 2.008002
+      Type::Parser::Token 2.008002
+      Type::Parser::TokenStream 2.008002
+      Type::Registry 2.008002
+      Type::Tie 2.008002
+      Type::Tie::ARRAY 2.008002
+      Type::Tie::BASE 2.008002
+      Type::Tie::HASH 2.008002
+      Type::Tie::SCALAR 2.008002
+      Type::Tiny 2.008002
+      Type::Tiny::Bitfield 2.008002
+      Type::Tiny::Class 2.008002
+      Type::Tiny::ConstrainedObject 2.008002
+      Type::Tiny::Duck 2.008002
+      Type::Tiny::Enum 2.008002
+      Type::Tiny::Intersection 2.008002
+      Type::Tiny::Role 2.008002
+      Type::Tiny::Union 2.008002
+      Type::Utils 2.008002
+      Types::Common 2.008002
+      Types::Common::Numeric 2.008002
+      Types::Common::String 2.008002
+      Types::Standard 2.008002
+      Types::Standard::ArrayRef 2.008002
+      Types::Standard::CycleTuple 2.008002
+      Types::Standard::Dict 2.008002
+      Types::Standard::HashRef 2.008002
+      Types::Standard::Map 2.008002
+      Types::Standard::ScalarRef 2.008002
+      Types::Standard::StrMatch 2.008002
+      Types::Standard::Tied 2.008002
+      Types::Standard::Tuple 2.008002
+      Types::TypeTiny 2.008002
+    requirements:
+      Exporter::Tiny 1.006000
+      ExtUtils::MakeMaker 6.17
+      perl 5.008001
   URI-5.32
     pathname: O/OA/OALDERS/URI-5.32.tar.gz
     provides:
@@ -2822,6 +2954,20 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  bareword-filehandles-0.007
+    pathname: I/IL/ILMARI/bareword-filehandles-0.007.tar.gz
+    provides:
+      bareword::filehandles 0.007
+    requirements:
+      B::Hooks::OP::Check 0
+      ExtUtils::Depends 0
+      ExtUtils::MakeMaker 0
+      Test::More 0.88
+      XSLoader 0
+      if 0
+      perl 5.008001
+      strict 0
+      warnings 0
   curry-2.000001
     pathname: M/MS/MSTROUT/curry-2.000001.tar.gz
     provides:
@@ -2830,6 +2976,39 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
+  indirect-0.39
+    pathname: V/VP/VPIT/indirect-0.39.tar.gz
+    provides:
+      indirect 0.39
+    requirements:
+      Carp 0
+      Config 0
+      ExtUtils::MakeMaker 0
+      File::Spec 0
+      IO::Handle 0
+      IO::Select 0
+      IPC::Open3 0
+      POSIX 0
+      Socket 0
+      Test::More 0
+      XSLoader 0
+      lib 0
+      perl 5.008001
+  multidimensional-0.014
+    pathname: I/IL/ILMARI/multidimensional-0.014.tar.gz
+    provides:
+      multidimensional 0.014
+    requirements:
+      B::Hooks::OP::Check 0.19
+      CPAN::Meta 2.112580
+      ExtUtils::Depends 0
+      ExtUtils::MakeMaker 0
+      Test::More 0.88
+      XSLoader 0
+      if 0
+      perl 5.008001
+      strict 0
+      warnings 0
   namespace-autoclean-0.31
     pathname: E/ET/ETHER/namespace-autoclean-0.31.tar.gz
     provides:
@@ -2852,3 +3031,13 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Package::Stash 0.23
       perl 5.008001
+  strictures-2.000006
+    pathname: H/HA/HAARG/strictures-2.000006.tar.gz
+    provides:
+      strictures 2.000006
+      strictures::extra undef
+    requirements:
+      bareword::filehandles 0
+      indirect 0
+      multidimensional 0
+      perl 5.006

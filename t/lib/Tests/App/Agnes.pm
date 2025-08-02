@@ -27,7 +27,7 @@ sub can_get_account :Tests {
     my $account = $schema->resultset('Account')->search({
         username => 'mary',
     })->first;
-    is($account->password, 'pass1', 'can get individual account from search');
+    is($account->is_admin, 1, 'can get individual account from search');
 
     my @accounts = $schema->resultset('Account')->all;
     is(scalar @accounts, 3, "Got 3 accounts");

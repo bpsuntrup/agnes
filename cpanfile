@@ -14,6 +14,7 @@ requires 'DBIx::Class::Helper::ResultSet::Shortcut';
 requires 'DateTime::Format::Strptime';
 requires 'JSON::Parse';
 requires 'List::Util';
+requires 'Crypt::PBKDF2';
 
 on 'test' => sub {
   requires 'Test::More';
