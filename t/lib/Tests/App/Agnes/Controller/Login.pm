@@ -8,6 +8,10 @@ use base 'Tests::Utils::CommonBase';
 use Test::More;
 use Test::Mojo;
 
+# TODO: test what happens if you provide invalid
+#  * username
+#  * password
+#  * tenant_id
 sub test_normal_login : Tests {
     my $self = shift;
     my $t = Test::Mojo->new('App::Agnes');
