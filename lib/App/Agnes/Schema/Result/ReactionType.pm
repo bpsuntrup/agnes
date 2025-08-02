@@ -27,19 +27,27 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 1 },
   "unicode",
   { data_type => "text", is_nullable => 1 },
+  "tenant_id",
+  { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
 );
 __PACKAGE__->set_primary_key("reaction_type_id");
-__PACKAGE__->add_unique_constraint("reaction_types_uk_name", ["name"]);
+__PACKAGE__->add_unique_constraint("reaction_types_uk_name_tenant_id", ["name", "tenant_id"]);
 __PACKAGE__->has_many(
   "reactions",
   "App::Agnes::Schema::Result::Reaction",
   { "foreign.reaction_type_id" => "self.reaction_type_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
+__PACKAGE__->belongs_to(
+  "tenant",
+  "App::Agnes::Schema::Result::Tenant",
+  { tenant_id => "tenant_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-25 14:46:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vOSH+PyLXVnGiO12jJ3M6Q
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:XYGpC8xq6BkQn5eC9OfeEw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

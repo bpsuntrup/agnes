@@ -33,9 +33,11 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "is_admin",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "tenant_id",
+  { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
 );
 __PACKAGE__->set_primary_key("account_id");
-__PACKAGE__->add_unique_constraint("users_uk_username", ["username"]);
+__PACKAGE__->add_unique_constraint("accounts_uk_username_tenant_id", ["username", "tenant_id"]);
 __PACKAGE__->has_many(
   "account_attributes",
   "App::Agnes::Schema::Result::AccountAttribute",
@@ -84,10 +86,16 @@ __PACKAGE__->has_many(
   { "foreign.owner_id" => "self.account_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
+__PACKAGE__->belongs_to(
+  "tenant",
+  "App::Agnes::Schema::Result::Tenant",
+  { tenant_id => "tenant_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Qfzm2TsjmP9e7VNOn/rSMA
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:YHGYkPhJuihQ5xw8YVrJDQ
 
 use aliased 'App::Agnes::Model';
 use DBI;

@@ -31,6 +31,8 @@ __PACKAGE__->add_columns(
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 1, size => 16 },
   "owner_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
+  "tenant_id",
+  { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
 );
 __PACKAGE__->set_primary_key("space_id");
 __PACKAGE__->has_many(
@@ -68,10 +70,16 @@ __PACKAGE__->has_many(
   { "foreign.space_id" => "self.space_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
+__PACKAGE__->belongs_to(
+  "tenant",
+  "App::Agnes::Schema::Result::Tenant",
+  { tenant_id => "tenant_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:l5xv1qsJIFpxTag0YYXhSw
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:YLpY9QFQdo7g/RQV7O9ukQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

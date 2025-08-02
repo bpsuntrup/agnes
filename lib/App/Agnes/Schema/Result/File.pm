@@ -29,6 +29,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "name",
   { data_type => "text", is_nullable => 1 },
+  "tenant_id",
+  { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
 );
 __PACKAGE__->set_primary_key("file_id");
 __PACKAGE__->has_many(
@@ -55,10 +57,16 @@ __PACKAGE__->has_many(
   { "foreign.icon" => "self.file_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
+__PACKAGE__->belongs_to(
+  "tenant",
+  "App::Agnes::Schema::Result::Tenant",
+  { tenant_id => "tenant_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5kIC0yYSC621/dRRjlfO6w
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:hEjJeZHczsxrwGuTAJWk/g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

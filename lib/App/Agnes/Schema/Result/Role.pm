@@ -20,9 +20,11 @@ __PACKAGE__->add_columns(
   },
   "name",
   { data_type => "text", is_nullable => 0 },
+  "tenant_id",
+  { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
 );
 __PACKAGE__->set_primary_key("role_id");
-__PACKAGE__->add_unique_constraint("roles_name_key", ["name"]);
+__PACKAGE__->add_unique_constraint("roles_uk_name_tenant_id", ["name", "tenant_id"]);
 __PACKAGE__->has_many(
   "account_roles",
   "App::Agnes::Schema::Result::AccountRole",
@@ -35,10 +37,16 @@ __PACKAGE__->has_many(
   { "foreign.role_id" => "self.role_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
+__PACKAGE__->belongs_to(
+  "tenant",
+  "App::Agnes::Schema::Result::Tenant",
+  { tenant_id => "tenant_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-07-26 12:39:44
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9ywmgxf4/2mf7cDzPVMs3g
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0KggDIFs4RU7cC7jjAx63w
 
 __PACKAGE__->many_to_many(permissions => 'role_permissions', 'permission');
 
