@@ -37,6 +37,12 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 __PACKAGE__->has_many(
+  "attributes",
+  "App::Agnes::Schema::Result::Attribute",
+  { "foreign.tenant_id" => "self.tenant_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+__PACKAGE__->has_many(
   "files",
   "App::Agnes::Schema::Result::File",
   { "foreign.tenant_id" => "self.tenant_id" },
@@ -62,8 +68,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:v+MohJZN029bDH1hz1fY8g
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:50:37
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:my3JjhEbiimYGB51YdXKFg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
