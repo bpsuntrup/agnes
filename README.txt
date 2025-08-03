@@ -123,7 +123,7 @@ REST JSON response layout:
 
 Example of how "/accounts" resource is layed out:
     {
-        "url": "/accounts/abig-uuid-iden-tify-ing-the-res-ource",
+        "url": "/api/rest/v1/accounts/abig-uuid-iden-tify-ing-the-res-ource",
         "account_id":  "abig-uuid-iden-tify-ing-the-res-ource",
         "username": "fred2",
         "displayname": "Freddy L'Gauche",
@@ -139,3 +139,13 @@ Example of how "/accounts" resource is layed out:
 
     For CREATE, READ, UPDATE, the full record is returned.
     For DELETE, "res" is empty
+
+GET request query parameters:
+    fields=url,account_id
+        * comma separated list of fields to return
+    query=...
+        * a string representing a query to run, based on query language described
+          above
+
+example:
+GET /api/rest/v1/accounts?fields=url,account_id&query=%7B%22where%22:%5B%22and%22,%5B%22is%22,%5B%22attr%22,%22eye_color%22%5D,%22blue%22%5D,%5B%22is%22,%5B%22attr%22,%22sex%22%5D,%22male%22%5D%5D%7D
