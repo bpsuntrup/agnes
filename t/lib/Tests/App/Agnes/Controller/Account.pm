@@ -176,9 +176,9 @@ sub create_account_sad : Tests {
 
 sub create_account_happy : Tests {
     my $self = shift;
-    note("Create account works when logged in with admin account and all required fields are included");
     my $t = Test::Mojo->new('App::Agnes');
 
+    note("Create account works when logged in with admin account and all required fields are included");
     $t->post_ok('/login' => form => {
         username => "mary",
         password => "pass1",
@@ -255,17 +255,110 @@ sub create_account_happy : Tests {
     note("TODO: Create account does not fail when you don't include nonrequired attributes");
 }
 
+sub delete_account_sad : Tests {
+    my $self = shift;
+    my $t = Test::Mojo->new('App::Agnes');
+
+    $t->post_ok('/login' => form => {
+        username => "mary",
+        password => "pass1",
+        tenant_id => $self->tenant_id(),
+    }, "Login with admin account");
+    $t->post_ok("/api/rest/v1/account" => json => {
+        account => {
+            username    => "mildred",
+            password    => "millypass1",
+            displayname => "Mildred Suntrup",
+            birthdate   => "2 Dec 2020",
+            email       => 'milly@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    }, "Create user mildred");
+
+    my $milly_id = $t->tx->res->json->{res}{account}{account_id};
+    $t->post_ok("/api/rest/v1/account" => json => {
+        account => {
+            username    => "edmund",
+            password    => "edmundpass1",
+            displayname => "Edmund Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    }, "Create user edmund");
+    my $edmund_id = $t->tx->res->json->{res}{account}{account_id};
+
+    $t->post_ok('/login' => form => {
+        username => "john",
+        password => "pass3",
+        tenant_id => $self->tenant_id(),
+    }, "Login with unprivileged account");
+    my $john = Model->rs('Account')->find({
+        username => "john",
+        tenant_id => $self->tenant_id(),
+    });
+    ok(!$john->has_permission('DELETE_ACCOUNT'));
+    $t->delete_ok("/api/rest/account/$milly_id")
+      ->status_is(403)
+      ->json_is('/err', 'ENOTAUTHORIZED', 'Unprivileged user cannot delete account');
 
 
-# * create users
-# 	* guarded by user_create role
-# 		* errors when user without user_create or admin does it
-# 	* must require required attributes
-# 		* errors when not all required attributes are provided
-# 	* must reject when invalid attributes
-# 		* invalid, because not on type
-# 		* invalid, because wrong type
-# 	* must be logged in
+    $t->post_ok("/logout");
+    $t->delete_ok("/api/rest/account/$milly_id")
+      ->status_is(401)
+      ->json_is('/err', 'ENOLOGIN', "Cannot delete if not logged in");
+
+    # privileged user can delete milly
+    $t->post_ok('/login' => form => {
+        username => "joe",
+        password => "pass2",
+        tenant_id => $self->tenant_id(),
+    }, "Login with privileged account");
+    $t->delete_ok("/api/rest/account/$milly_id")
+      ->status_is(200, "Can delete user with privileged user.")
+      ->json_has("/res")
+      ->json_hasnt("/err");
+    my $milly = Model->rs('Account')->find({
+        username => 'mildred',
+        tenant_id => $self->tenant_id,
+    });
+    ok(!$milly->active, "mildred user has been deactivated");
+
+    # admin can delete edmund
+    $t->post_ok('/login' => form => {
+        username => "mary",
+        password => "pass1",
+        tenant_id => $self->tenant_id(),
+    }, "Login with admin account");
+    $t->delete_ok("/api/rest/account/$edmund_id")
+      ->status_is(200, "Can delete user with admin.")
+      ->json_has("/res")
+      ->json_hasnt("/err");
+    my $edmund = Model->rs('Account')->find({
+        username => 'edmund',
+        tenant_id => $self->tenant_id,
+    });
+    ok(!$edmund->active, "edmund user has been deactivated");
+
+    # trying to delete nonexistant account is 404
+    $t->delete_ok("/api/rest/account/nonsense-id-that-isnt-there")
+      ->status_is(404, "Delete 404s for nonsense resource")
+      ->json_is("/err", 'ENOMATCHINGID')
+      ->json_hasnt("/res");
+}
+
+
+
 # * read users
 # 	* search for users by attribute
 # 	* must be logged in

@@ -91,6 +91,7 @@ sub add_test_accounts {
         CROSS JOIN roles
         WHERE
         (permissions.permission='CREATE_ACCOUNT' AND roles.name = 'bishop')
+        (permissions.permission='DELETE_ACCOUNT' AND roles.name = 'bishop')
     ");
 
     # Add required attributes
