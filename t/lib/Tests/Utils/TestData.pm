@@ -66,7 +66,8 @@ sub add_test_accounts {
         INSERT INTO permissions
         (permission)
         VALUES
-        ('CREATE_ACCOUNT')
+        ('CREATE_ACCOUNT'),
+        ('DELETE_ACCOUNT')
         ");
     $self->{dbh}->do("
         INSERT INTO roles
@@ -90,7 +91,7 @@ sub add_test_accounts {
         FROM permissions
         CROSS JOIN roles
         WHERE
-        (permissions.permission='CREATE_ACCOUNT' AND roles.name = 'bishop')
+        (permissions.permission='CREATE_ACCOUNT' AND roles.name = 'bishop') OR
         (permissions.permission='DELETE_ACCOUNT' AND roles.name = 'bishop')
     ");
 

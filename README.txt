@@ -13,6 +13,12 @@ carmel exec -- morbo bin/app
 Run tests:
 carmel exec -- prove -lv t/xUnit.t
 
+Run single class:
+carmel exec -- t/bin/t.pl Tests::App::Agnes
+
+Run single method:
+carmel exec -- t/bin/t.pl Tests::App::Agnes can_get_account
+
 Validate documentation:
 * see https://github.com/APIDevTools/swagger-cli
 swagger-cli validate dox/openapi3/agnes.yaml
