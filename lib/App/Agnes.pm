@@ -83,7 +83,7 @@ sub startup {
 
     my $auth = $r->under($authenticate);
 
-    my $apiv1 = $auth->under('/api/v1');
+    my $restv1 = $auth->under('/api/rest/v1');
 
     # Normal route to controller
     $r->get('/')->to('main#index');
@@ -91,8 +91,8 @@ sub startup {
     $r->post('/api/v1/login')->to('login#login_api');
 
     $auth->get('/login')->to('login#login_ok');
-    $apiv1->post('/accounts')->to('account#create_account');
-    $apiv1->get('/accounts')->to('account#get_accounts');
+    $restv1->post('/account')->to('account#create_account');
+    $restv1->get('/accounts')->to('account#get_accounts');
 }
 
 

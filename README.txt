@@ -123,7 +123,7 @@ REST JSON response layout:
 
 Example of how "/accounts" resource is layed out:
     {
-        "url": "/api/rest/v1/accounts/abig-uuid-iden-tify-ing-the-res-ource",
+        "path": "/api/rest/v1/accounts/abig-uuid-iden-tify-ing-the-res-ource",
         "account_id":  "abig-uuid-iden-tify-ing-the-res-ource",
         "username": "fred2",
         "displayname": "Freddy L'Gauche",

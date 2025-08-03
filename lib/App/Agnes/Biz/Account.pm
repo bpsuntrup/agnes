@@ -58,7 +58,6 @@ sub create_account {
     #   * every required attribute is provided
     #   * every attribute is the correct type
     my @account_type_attributes = $at->account_type_attributes->search({},{ prefetch => 'attribute' })->all;
-    my $account_attributes;
     my %valid_attributes;
     for my $ata (@account_type_attributes) {
         my $name = $ata->attribute->name;
@@ -106,7 +105,18 @@ sub create_account {
 
     Model->rs('AccountAttribute')->populate([ map { { %$_, account_id => $id } } @attrs_to_add ]);
 
-    return BizResult->new(res => {account_id => $id});
+    delete $account{password};
+    delete $account{account_type_id};
+    delete $account{tenant_id};
+    $account{attributes} =  $account->{attributes};
+    return BizResult->new(
+        res => {
+            account => {
+                %account,
+                account_id => $id,
+                path       => "/api/rest/v1/account/$id",
+            },
+        });
 }
 
 1;

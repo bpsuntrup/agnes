@@ -54,7 +54,7 @@ sub create_account_sad : Tests {
     my $t = Test::Mojo->new('App::Agnes');
 
     note("Create account should fail when not logged in.");
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -72,7 +72,7 @@ sub create_account_sad : Tests {
         password => "pass3",
         tenant_id => $self->tenant_id(),
     })->status_is(302);
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -92,7 +92,7 @@ sub create_account_sad : Tests {
         tenant_id => $self->tenant_id(),
     })->status_is(302);
     $t->get_ok("/login")->status_is(200)->content_like(qr/mary/);
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -102,7 +102,7 @@ sub create_account_sad : Tests {
         },
     })->status_is(400, "Fails to create an account without an account_type")
       ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -115,7 +115,7 @@ sub create_account_sad : Tests {
       ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
 
     note("Create account fails when required attribute is missing.");
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -132,7 +132,7 @@ sub create_account_sad : Tests {
       ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST");
 
     note("Create account fails when attribute is wrong type.");
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -150,7 +150,7 @@ sub create_account_sad : Tests {
       ->json_is('/err', 'EBADREQUEST', "Get EBADREQUEST")
       ->json_like('/msg', qr/invalid/, "Get invalid message");
 
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mary",
             password    => "millypass1",
@@ -184,7 +184,7 @@ sub create_account_happy : Tests {
         password => "pass1",
         tenant_id => $self->tenant_id(),
     }, "Login with admin account");
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "mildred",
             password    => "millypass1",
@@ -223,13 +223,13 @@ sub create_account_happy : Tests {
     }, "Login with nonadmin privileged account");
     ok(Model->rs('Account')->find({ username => 'joe' })->has_permission("CREATE_ACCOUNT"),
        "User has permission CREATE_ACCOUNT");
-    $t->post_ok("/api/v1/accounts" => json => {
+    $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "edmund",
             password    => "edmundpass1",
-            displayname => "Mildred Suntrup",
-            birthdate   => "2 Dec 2020",
-            email       => 'milly@suntrup.net',
+            displayname => "Edmund Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
             account_type_id   => 4, # has_required_attrs
             attributes => {
                 fav_book => "Goodnight Moon",
@@ -237,7 +237,15 @@ sub create_account_happy : Tests {
                 reception_date => "1990-01-01",
             },
         },
-    })->status_is(200, "Can create user with nonadmin privileged account");
+    })->status_is(200, "Can create user with nonadmin privileged account")
+      ->json_has("/res/account/path")
+      ->json_has("/res/account/account_id")
+      ->json_is("/res/account/username", "edmund")
+      ->json_hasnt("/res/account/password")
+      ->json_is("/res/account/birthdate", "2018-05-15")
+      ->json_is("/res/account/email", 'ed@suntrup.net')
+      ->json_is("/res/account/attributes/fav_book", "Goodnight Moon")
+      ->json_is("/res/account/attributes/reception_date", "1990-01-01");
     my $edmund = Model->rs('Account')->find({ username => "edmund" });
     isnt("edmundpass1", $edmund->password, "Password is not saved in DB.");
     @attributes = $edmund->attributes;
