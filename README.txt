@@ -37,65 +37,14 @@ TODO:
 
 The database data files are ~/pgdata, which is postgres 15. 
 
-
-messages
-* HAS body
-* HAS MANY spaces (can be IM, posted to group, to individual's wall, as subcomment on another comment)
-* HAS author
-* HAS MANY reactions
-* HAS MANY attachments
-
-attachments
-* HAS A (single) owner
-* HAS MANY owner_spaces (where this is visible)
-* url
-* mime type
-
-spaces
-* HAS MANY messages
-* HAS MANY participants (space_participants)
-* enum(public/private)
-* name
-* icon
+Schema design:
+==============
+# TODO
 
 
-space_participants
-* mapping table between users and spaces
-
-reactions
-* HAS A message
-* HAS A author (users)
-* HAS A reaction type
-* unique across all three of these columns
-* all three are required
-
-reaction_type
-* HAS A small gif
-
-users need types. (child/adult, faithful/catechumen/inquirer/priest/deacon)
-
-user_type
-* many to many,  user_attribute_types
-
-user_attribute_types
-* name
-* type (date, text, enum, int, boolean)
-* many to many user_types
-
-user_type_attributes_types
-* maps between user types and user attribute types
-* user_type
-* user_attribute_type
-* required boolean
-
-user_attributes
-* user
-* user_attribute_type
-* value
-
-user
 
 idea for GET /accounts query language:
+======================================
 
 just like lisp, but with JSON list syntax instead of s expressions.
 
@@ -145,3 +94,48 @@ Possibly, with optional other top level queries parameters next to "where" like:
 These attributes should only be valid if:
 They are real attributes in the database
 They are public. I should add privacy settings and check those.
+
+
+Idea for API in general:
+========================
+
+Url:
+/api/v1
+/rest/v1
+/rpc
+/graphql
+/api/rpc
+
+REST JSON response layout:
+    * Healthy response, "msg" is optional:
+    {
+        "res": {
+            BODY OF METHOD RESPONSE GOES HERE
+        },
+        "msg": "Some optional msg string."
+    }
+
+    * Error response, "msg" also optional:
+    {
+        "err": "ERROR_CODE",
+        "msg": "Optional description of error."
+    }
+
+Example of how "/accounts" resource is layed out:
+    {
+        "url": "/accounts/abig-uuid-iden-tify-ing-the-res-ource",
+        "account_id":  "abig-uuid-iden-tify-ing-the-res-ource",
+        "username": "fred2",
+        "displayname": "Freddy L'Gauche",
+        "birthdate": "1990-09-04",
+        "email": "fred@lgauche.net",
+        "account_type": "catechumen",
+        "is_admin": false,
+        "attributes": {
+            "eye_color": "magenta",
+            "reception_date": "2020-12-24"
+        }
+    }
+
+    For CREATE, READ, UPDATE, the full record is returned.
+    For DELETE, "res" is empty
