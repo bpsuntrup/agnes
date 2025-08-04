@@ -28,27 +28,6 @@ use Mojo::JSON qw/to_json/;
 #                        ->json_has('/data/0/username', 'can get a username');
 #}
 
-#sub create_account : Tests {
-#    my $t = Test::Mojo->new('App::Agnes');
-#    $t->post_ok("/accounts" => json => {
-#        account => {
-#            username    => "mildred",
-#            password    => "millypass1",
-#            displayname => "Mildred Suntrup",
-#            birthdate   => "2 Dec 2020",
-#            email       => 'milly@suntrup.net',
-#            account_type_id   => 1,
-#        },
-#    })->status_is(200, "Able to create account with POST /accounts");
-#
-#    my $account = Model->schema->resultset('Account')->search({
-#        username => 'mildred',
-#    })->first;
-#
-#    is($account->displayname, 'Mildred Suntrup', "Able to get account out of database");
-#    isnt($account->password, 'millypass1', "Passwords should not be stored in clear text");
-#}
-
 sub create_account_sad : Tests {
     my $self = shift;
     my $t = Test::Mojo->new('App::Agnes');
@@ -255,7 +234,7 @@ sub create_account_happy : Tests {
     note("TODO: Create account does not fail when you don't include nonrequired attributes");
 }
 
-sub delete_account_sad : Tests {
+sub delete_account : Tests {
     my $self = shift;
     my $t = Test::Mojo->new('App::Agnes');
 
@@ -318,13 +297,13 @@ sub delete_account_sad : Tests {
         tenant_id => $self->tenant_id(),
     });
     ok(!$john->has_permission('DELETE_ACCOUNT'));
-    $t->delete_ok("/api/rest/account/$milly_id")
+    $t->delete_ok("/api/rest/v1/account/$milly_id")
       ->status_is(403)
       ->json_is('/err', 'ENOTAUTHORIZED', 'Unprivileged user cannot delete account');
 
 
-    $t->post_ok("/logout");
-    $t->delete_ok("/api/rest/account/$milly_id")
+    $t = Test::Mojo->new('App::Agnes');
+    $t->delete_ok("/api/rest/v1/account/$milly_id")
       ->status_is(401)
       ->json_is('/err', 'ENOLOGIN', "Cannot delete if not logged in");
 
@@ -334,10 +313,11 @@ sub delete_account_sad : Tests {
         password => "pass2",
         tenant_id => $self->tenant_id(),
     }, "Login with privileged account");
-    $t->delete_ok("/api/rest/account/$milly_id")
+    $t->delete_ok("/api/rest/v1/account/$milly_id")
       ->status_is(200, "Can delete user with privileged user.")
       ->json_has("/res")
       ->json_hasnt("/err");
+    $milly->discard_changes;
     ok(!$milly->active, "mildred user has been deactivated");
 
     # admin can delete edmund
@@ -346,15 +326,21 @@ sub delete_account_sad : Tests {
         password => "pass1",
         tenant_id => $self->tenant_id(),
     }, "Login with admin account");
-    $t->delete_ok("/api/rest/account/$edmund_id")
+    $t->delete_ok("/api/rest/v1/account/$edmund_id")
       ->status_is(200, "Can delete user with admin.")
       ->json_has("/res")
       ->json_hasnt("/err");
+    $edmund->discard_changes;
     ok(!$edmund->active, "edmund user has been deactivated");
 
     # trying to delete nonexistant account is 404
-    $t->delete_ok("/api/rest/account/nonsense-id-that-isnt-there")
-      ->status_is(404, "Delete 404s for nonsense resource")
+    $t->delete_ok("/api/rest/v1/account/nonsense-id-that-isnt-there")
+      ->status_is(400, "Delete 400s for bad uuid")
+      ->json_is("/err", 'EBADUUID')
+      ->json_hasnt("/res");
+
+    $t->delete_ok("/api/rest/v1/account/bcfcada6-31de-463c-a02d-b2a5673cea9f")
+      ->status_is(404, "Delete 404s for nonexistant resource")
       ->json_is("/err", 'ENOMATCHINGID')
       ->json_hasnt("/res");
 }

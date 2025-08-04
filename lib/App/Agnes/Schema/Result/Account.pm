@@ -35,6 +35,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "tenant_id",
   { data_type => "uuid", is_foreign_key => 1, is_nullable => 0, size => 16 },
+  "is_active",
+  { data_type => "boolean", default_value => \"true", is_nullable => 0 },
 );
 __PACKAGE__->set_primary_key("account_id");
 __PACKAGE__->add_unique_constraint("accounts_uk_username_tenant_id", ["username", "tenant_id"]);
@@ -94,8 +96,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-01 20:43:07
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:YHGYkPhJuihQ5xw8YVrJDQ
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-08-03 20:19:36
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:RzykFJUBrtOOZw93fmmVpg
 
 use aliased 'App::Agnes::Model';
 use DBI;
@@ -132,6 +134,12 @@ sub has_permission {
     my ($self, $perm) = @_;
     return 1 if $self->is_admin;
     return $self->permissions_rs->count;
+}
+
+# adapter for possibly other ways of determining activity in future
+sub active {
+    my $self = shift;
+    return $self->is_active;
 }
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

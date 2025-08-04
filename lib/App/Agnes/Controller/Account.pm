@@ -41,4 +41,17 @@ sub create_account {
     return $c->render(json => { res => $res->res }, status => 200);
 }
 
+# DELETE /account
+sub deactivate_account {
+    my $c = shift;
+    my $account_id = $c->param('account_id');
+    my $res = BizAccount->deactivate_account(account_id      => $account_id,
+                                             current_account => $c->current_account);
+    if ($res->err) {
+        return $c->render_error(err => $res->err, msg => $res->msg);
+    }
+
+    return $c->render(json => { res => $res->res }, status => 200);
+}
+
 1;

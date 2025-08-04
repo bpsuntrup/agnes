@@ -19,9 +19,13 @@ our %ERROR_TO_HTTP = (
 
     # invalid data in request body
     EBADREQUEST => 400,
+    EBADUUID => 400,
 
     # Username is taken, etc.
     ECONFLICT => 409,
+
+    # /resource/1234, but 1234 doesn't exist
+    ENOMATCHINGID => 404,
 );
 
 sub error_code_to_http {

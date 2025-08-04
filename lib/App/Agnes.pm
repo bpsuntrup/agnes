@@ -92,6 +92,7 @@ sub startup {
 
     $auth->get('/login')->to('login#login_ok');
     $restv1->post('/account')->to('account#create_account');
+    $restv1->delete('/account/:account_id')->to('account#deactivate_account');
     $restv1->get('/accounts')->to('account#get_accounts');
 }
 

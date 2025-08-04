@@ -7,6 +7,7 @@ use base 'App::Agnes::Biz';
 use aliased 'App::Agnes::Model';
 use aliased 'App::Agnes::Biz::Attribute';
 use aliased 'App::Agnes::Biz::Password';
+use App::Agnes::Utils qw/is_valid_uuid/;
 
 sub create_account {
     my $self = shift;
@@ -117,6 +118,36 @@ sub create_account {
                 path       => "/api/rest/v1/account/$id",
             },
         });
+}
+
+sub deactivate_account {
+    my $self = shift;
+    my %params = @_;
+    my $current_account = $params{current_account};
+    my $account_id = $params{account_id};
+
+    #validate account_id
+    return BizResult->new(
+        err => 'EBADUUID',
+        msg => 'Account ID provided is not a valid UUID. See standard form of the Postgres UUID type here: '
+             . 'https://www.postgresql.org/docs/current/datatype-uuid.html')
+        unless (is_valid_uuid($account_id));
+
+
+    if ($current_account->has_permission('DELETE_ACCOUNT')) {
+        my $rm_account = Model->rs('Account')->find({ account_id => $account_id });
+        if ($rm_account) {
+            $rm_account->is_active(0);
+            $rm_account->update;
+            return BizResult->new( res => {}, msg => "Account $account_id deactivated."  );
+        }
+        else {
+            return BizResult->new( err => 'ENOMATCHINGID', msg => "No account with account_id $account_id exists.");
+        }
+    }
+    else {
+        return BizResult->new( err => 'ENOTAUTHORIZED', msg => "You do not have permission to deactivate users.");
+    }
 }
 
 1;
