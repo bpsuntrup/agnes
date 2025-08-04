@@ -279,8 +279,13 @@ sub delete_account_sad : Tests {
             },
         },
     }, "Create user mildred");
-
     my $milly_id = $t->tx->res->json->{res}{account}{account_id};
+    my $milly = Model->rs('Account')->find({
+        username => 'mildred',
+        tenant_id => $self->tenant_id,
+    });
+    ok($milly->active, "milly is active");
+
     $t->post_ok("/api/rest/v1/account" => json => {
         account => {
             username    => "edmund",
@@ -297,6 +302,11 @@ sub delete_account_sad : Tests {
         },
     }, "Create user edmund");
     my $edmund_id = $t->tx->res->json->{res}{account}{account_id};
+    my $edmund = Model->rs('Account')->find({
+        username => 'edmund',
+        tenant_id => $self->tenant_id,
+    });
+
 
     $t->post_ok('/login' => form => {
         username => "john",
@@ -328,10 +338,6 @@ sub delete_account_sad : Tests {
       ->status_is(200, "Can delete user with privileged user.")
       ->json_has("/res")
       ->json_hasnt("/err");
-    my $milly = Model->rs('Account')->find({
-        username => 'mildred',
-        tenant_id => $self->tenant_id,
-    });
     ok(!$milly->active, "mildred user has been deactivated");
 
     # admin can delete edmund
@@ -344,10 +350,6 @@ sub delete_account_sad : Tests {
       ->status_is(200, "Can delete user with admin.")
       ->json_has("/res")
       ->json_hasnt("/err");
-    my $edmund = Model->rs('Account')->find({
-        username => 'edmund',
-        tenant_id => $self->tenant_id,
-    });
     ok(!$edmund->active, "edmund user has been deactivated");
 
     # trying to delete nonexistant account is 404
