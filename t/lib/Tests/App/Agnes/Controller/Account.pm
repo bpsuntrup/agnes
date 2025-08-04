@@ -345,24 +345,165 @@ sub delete_account : Tests {
       ->json_hasnt("/res");
 }
 
+sub update_account : Tests {
+    my $self = shift;
+    my $t = Test::Mojo->new('App::Agnes');
+    my $john = Model->rs('Account')->find({
+        username => "john",
+        tenant_id => $self->tenant_id(),
+    });
+    my $joe = Model->rs('Account')->find({
+        username => "joe",
+        tenant_id => $self->tenant_id(),
+    });
+    my $mary = Model->rs('Account')->find({
+        username => "mary",
+        tenant_id => $self->tenant_id(),
+    });
+
+    # As unprivileged user, can only modify own user
+    $t->post_ok('/login' => form => {
+        username => "john",
+        password => "pass3",
+        tenant_id => $self->tenant_id(),
+    }, "Login with unprivileged account");
+
+    ok(!$john->has_permission('UPDATE_ACCOUNT'));
+    $t->put_ok("/api/rest/v1/account/" . $mary->account_id => json => {
+        account => {
+            username    => "mary",
+            password    => "edmundpass1",
+            displayname => "Edmund Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(403, "Cannot update user with nonprivileged account")
+      ->json_is('/err', 'ENOTAUTHORIZED');
+    $mary->discard_changes;
+    isnt($mary->displayname, "Edmund Suntrup", "User has not changed");
+    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+        account => {
+            username    => "john",
+            password    => "edmundpass1",
+            displayname => "Edmund Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(200, "Can update own account")
+      ->json_hasnt('/err', "no error");
+    $john->discard_changes;
+    is($john->displayname, "Edmund Suntrup", "User has in fact changed.");
+
+    # When has privilege UPDATE_ACCOUNTS, can update any account
+    $t = Test::Mojo->new('App::Agnes');
+    $t->post_ok('/login' => form => {
+        username => "joe",
+        password => "pass2",
+        tenant_id => $self->tenant_id(),
+    }, "Login with unprivileged account");
+    ok($joe->has_permission('UPDATE_ACCOUNT'));
+    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+        account => {
+            username    => "john",
+            password    => "edmundpass1",
+            displayname => "John Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(200, "Can update other user's account with privileged nonadmin user")
+      ->json_hasnt('/err', "no error");
+    $john->discard_changes;
+    is($john->displayname, "John Suntrup", "User has in fact changed.");
+
+    # When user is admin, can update any account
+    $t = Test::Mojo->new('App::Agnes');
+    $t->post_ok('/login' => form => {
+        username => "mary",
+        password => "pass1",
+        tenant_id => $self->tenant_id(),
+    }, "Login with admin account");
+    ok($mary->is_admin);
+    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+        account => {
+            username    => "john",
+            password    => "edmundpass1",
+            displayname => "Buzz Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Buzz",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(200, "Can update other user's account with admin (and unprivileged) user.")
+      ->json_hasnt('/err', "no error");
+    $john->discard_changes;
+    is($john->displayname, "Buzz Suntrup", "User has in fact changed.");
+    is($john->attribute("christian_name"), "Buzz", "Attribute has been updated");
+
+    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+        account => {
+            username    => "john",
+            password    => "edmundpass1",
+            displayname => "Bingo Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(400)
+      ->json_is('/err', "EBADREQUEST", "Fails when attribute is missing");
+    $john->discard_changes;
+    is($john->displayname, "Buzz Suntrup", "User has not changed.");
+
+    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+        account => {
+            username    => "john",
+            password    => "edmundpass1",
+            displayname => "Bingo Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Buzz",
+                reception_date => "wrong type",
+            },
+        },
+    })->status_is(400)
+      ->json_is('/err', "EBADREQUEST", "Fails when attribute is wrong type");
+    $john->discard_changes;
+    is($john->displayname, "Buzz Suntrup", "User has not changed.");
+}
+
 
 
 # * read users
 # 	* search for users by attribute
 # 	* must be logged in
-# * delete users
-# 	* must be logged in
-# 	* must have admin or user_delete role
-# 		* errors when not
-# 	* must delete all user_attributes too
-# 	* user must be left in system with only username and null password, and "deleted" user type
-# * update users
-# 	* must be logged in
-# 	* must require required attributes
-# 		* cannot set required attribute to empty
-# 	* must reject when invalid attributes
-# 		* invalid, because not on type
-# 		* invalid, because wrong type
 
 
 1;
