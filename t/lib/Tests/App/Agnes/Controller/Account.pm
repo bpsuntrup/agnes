@@ -314,9 +314,9 @@ sub delete_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with privileged account");
     $t->delete_ok("/api/rest/v1/account/$milly_id")
-      ->status_is(204, "Can delete user with privileged user.")
-      ->json_has("/res")
-      ->json_hasnt("/err");
+      ->status_is(200, "Can delete user with privileged user.") # TODO: report bug here. 204 caused problems in framework
+      ->json_hasnt("/err")
+      ->json_has("/res");
     $milly->discard_changes;
     ok(!$milly->active, "mildred user has been deactivated");
 
@@ -327,9 +327,9 @@ sub delete_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with admin account");
     $t->delete_ok("/api/rest/v1/account/$edmund_id")
-      ->status_is(204, "Can delete user with admin.")
-      ->json_has("/res")
-      ->json_hasnt("/err");
+      ->status_is(200, "Can delete user with admin.") # TODO: report bug here. 204 caused problems in framework
+      ->json_hasnt("/err")
+      ->json_has("/res");
     $edmund->discard_changes;
     ok(!$edmund->active, "edmund user has been deactivated");
 
@@ -388,6 +388,26 @@ sub update_account : Tests {
       ->json_is('/err', 'ENOTAUTHORIZED');
     $mary->discard_changes;
     isnt($mary->displayname, "Edmund Suntrup", "User has not changed");
+
+    $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
+        account => {
+            username    => "mary",
+            password    => "edmundpass1",
+            displayname => "Edmund Suntrup",
+            birthdate   => "2018-05-15",
+            email       => 'ed@suntrup.net',
+            account_type_id   => 4, # has_required_attrs
+            attributes => {
+                fav_book => "Goodnight Moon",
+                christian_name => "Mildred",
+                reception_date => "1990-01-01",
+            },
+        },
+    })->status_is(409, "Cannot change username to name that is in use")
+      ->json_is('/err', "ECONFLICT");
+    $john->discard_changes;
+    is($john->username, "john", "User has not changed.");
+
     $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
         account => {
             username    => "john",

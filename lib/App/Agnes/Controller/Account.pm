@@ -66,7 +66,7 @@ sub deactivate_account {
         return $c->render_error(err => $res->err, msg => $res->msg);
     }
 
-    return $c->render(json => { res => $res->res }, status => 204);
+    return $c->render(json => { res => $res->res }, status => 200); # TODO: report bug for when this is 204 instead of 200
 }
 
 1;

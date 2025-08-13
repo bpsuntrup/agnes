@@ -105,6 +105,12 @@ use DBI;
 __PACKAGE__->many_to_many(roles => 'account_roles', 'role');
 __PACKAGE__->resultset_class('App::Agnes::Schema::ResultSet::Accounts');
 
+sub attribute {
+    my $self = shift;
+    my $att_name = shift;
+    return $self->account_attributes->find({'attribute.name' => $att_name},{ join => 'attribute' })->value;
+}
+
 sub attributes {
     my $self = shift;
     my %atts = ();

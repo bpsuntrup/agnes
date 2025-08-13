@@ -137,7 +137,6 @@ sub update_account {
     #further validate account_id
     my $update_account = Model->rs('Account')->find({ account_id => $account_id });
     unless ($update_account) {
-        print("BENJAMIN id is $account_id");
         return BizResult->new( err => 'ENOMATCHINGID', msg => "No account with account_id $account_id exists.");
     }
 
@@ -149,16 +148,16 @@ sub update_account {
         unless ($permission) {
             return BizResult->new(err => 'ENOTAUTHORIZED');
         }
-
-        # Validate username exists
-        unless (   Model->rs('Account')->username_available($account->{username}) ) {
-            return BizResult->new(err => "ECONFLICT", msg => "Username ($username) is already in use.");
-        }
     }
 
     # Validate username is good
     unless ($username =~ /[A-Za-z_][A-Za-z_0-9]*/) {
         return BizResult->new(err => "EBADREQUEST", msg => "Username is invalid.");
+    }
+    my $username_changed = $username ne $update_account->username;
+    my $username_available = Model->rs('Account')->username_available($account->{username});
+    if ($username_changed && !$username_available) {
+        return BizResult->new(err => "ECONFLICT", msg => "Username ($username) is already in use.");
     }
 
     # Validate account_type
