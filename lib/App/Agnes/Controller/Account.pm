@@ -38,10 +38,25 @@ sub create_account {
         return $c->render_error(err => $res->err, msg => $res->msg);
     }
 
+    return $c->render(json => { res => $res->res }, status => 201);
+}
+
+# PUT /account/:account_id
+sub update_account {
+    my $c = shift;
+    my $account_id = $c->param('account_id');
+    my $data = $c->req->json;
+    my $res = BizAccount->update_account(account_id      => $account_id,
+                                         account         => $data->{account},
+                                         current_account => $c->current_account);
+    if ($res->err) {
+        return $c->render_error(err => $res->err, msg => $res->msg);
+    }
+
     return $c->render(json => { res => $res->res }, status => 200);
 }
 
-# DELETE /account
+# DELETE /account/:account_id
 sub deactivate_account {
     my $c = shift;
     my $account_id = $c->param('account_id');
@@ -51,7 +66,7 @@ sub deactivate_account {
         return $c->render_error(err => $res->err, msg => $res->msg);
     }
 
-    return $c->render(json => { res => $res->res }, status => 200);
+    return $c->render(json => { res => $res->res }, status => 204);
 }
 
 1;

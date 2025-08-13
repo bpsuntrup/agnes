@@ -177,7 +177,7 @@ sub create_account_happy : Tests {
                 reception_date => "1990-01-01",
             },
         },
-    })->status_is(200, "Can create user with admin account");
+    })->status_is(201, "Can create user with admin account");
     $t->app->log->level('debug');
     my $milly = Model->rs('Account')->find({ username => "mildred" }, {
         prefetch => {
@@ -216,7 +216,7 @@ sub create_account_happy : Tests {
                 reception_date => "1990-01-01",
             },
         },
-    })->status_is(200, "Can create user with nonadmin privileged account")
+    })->status_is(201, "Can create user with nonadmin privileged account")
       ->json_has("/res/account/path")
       ->json_has("/res/account/account_id")
       ->json_is("/res/account/username", "edmund")
@@ -314,7 +314,7 @@ sub delete_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with privileged account");
     $t->delete_ok("/api/rest/v1/account/$milly_id")
-      ->status_is(200, "Can delete user with privileged user.")
+      ->status_is(204, "Can delete user with privileged user.")
       ->json_has("/res")
       ->json_hasnt("/err");
     $milly->discard_changes;
@@ -327,7 +327,7 @@ sub delete_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with admin account");
     $t->delete_ok("/api/rest/v1/account/$edmund_id")
-      ->status_is(200, "Can delete user with admin.")
+      ->status_is(204, "Can delete user with admin.")
       ->json_has("/res")
       ->json_hasnt("/err");
     $edmund->discard_changes;
@@ -368,6 +368,7 @@ sub update_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with unprivileged account");
 
+    $t->app->log->level('info');
     ok(!$john->has_permission('UPDATE_ACCOUNT'));
     $t->put_ok("/api/rest/v1/account/" . $mary->account_id => json => {
         account => {
@@ -387,7 +388,7 @@ sub update_account : Tests {
       ->json_is('/err', 'ENOTAUTHORIZED');
     $mary->discard_changes;
     isnt($mary->displayname, "Edmund Suntrup", "User has not changed");
-    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+    $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
         account => {
             username    => "john",
             password    => "edmundpass1",
@@ -414,7 +415,7 @@ sub update_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with unprivileged account");
     ok($joe->has_permission('UPDATE_ACCOUNT'));
-    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+    $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
         account => {
             username    => "john",
             password    => "edmundpass1",
@@ -441,7 +442,7 @@ sub update_account : Tests {
         tenant_id => $self->tenant_id(),
     }, "Login with admin account");
     ok($mary->is_admin);
-    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+    $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
         account => {
             username    => "john",
             password    => "edmundpass1",
@@ -461,7 +462,7 @@ sub update_account : Tests {
     is($john->displayname, "Buzz Suntrup", "User has in fact changed.");
     is($john->attribute("christian_name"), "Buzz", "Attribute has been updated");
 
-    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+    $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
         account => {
             username    => "john",
             password    => "edmundpass1",
@@ -479,7 +480,7 @@ sub update_account : Tests {
     $john->discard_changes;
     is($john->displayname, "Buzz Suntrup", "User has not changed.");
 
-    $t->put_ok("/api/rest/v1/account" . $john->account_id => json => {
+    $t->put_ok("/api/rest/v1/account/" . $john->account_id => json => {
         account => {
             username    => "john",
             password    => "edmundpass1",

@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use base 'Exporter';
-use feature 'state';
 our @EXPORT_OK = qw/ dbh $dbh last_id /;
 
 use DBI;
