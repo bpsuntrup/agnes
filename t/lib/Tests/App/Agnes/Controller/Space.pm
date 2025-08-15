@@ -1,54 +1,28 @@
-roles:
-* create
-	* must be admin
-	* must be logged in
-	* must include valid permissions
-* read
-	* must have admin to see all
-	* must be logged in
-	* may see your own if not admin
-* update
-	* must be admin
-	* must be logged in
-	* must include valid permissions
-* delete
-	* must be admin
-	* must be logged in
+package Tests::App::Agnes::Controller::Space;
 
-attributes:
-* create
-	* must be admin
-	* must be logged in
-	* must have valid types (date, enum, text, etc)
-* read
-	* must be logged in
-* update
-	* must be admin
-	* must be logged in
-* delete
-	* must be admin
-	* must be logged in
+use strict;
+use warnings;
 
-user_types:
-* create
-	* must have admin
-	* must be logged in
-* read
-	* must be logged in
-* update
-	* add or remove attributes
-	* must be admin
-	* must be logged in
-* delete
-	* must be admin
-	* must be logged in
 
-users:
-* read users
-	* search for users by attribute
-	* must be logged in
+use Tests::Utils::TestData;
 
-spaces
+use base 'Tests::Utils::CommonBase';
+use Test::More;
+use Test::Mojo;
+use App::Agnes::Config;
+use aliased 'App::Agnes::Model';
+use Mojo::JSON qw/to_json/;
+
+sub create_space : Tests {
+    ok(1, "running test");
+}
+
+
+1;
+
+__END__
+
+TODO: 
     * create
         * must have permission to create top level space (with no parent)
         * must have space permission (spermission? yuck) to create subspace
@@ -109,61 +83,3 @@ spaces
           space settings
         * subspaces are also open to superspace members to join, or closed without invite
             * hence 4 types of subspaces, visibl/invisible X open/closed
-
-posts
-...
-
-files
-...
-
-Done:
-=====
-users:
-    * create users
-        * guarded by user_create role
-            * errors when user without user_create or admin does it
-        * must require required attributes
-            * errors when not all required attributes are provided
-        * must reject when invalid attributes
-            * invalid, because not on type
-            * invalid, because wrong type
-        * must be logged in
-    * delete users
-        * must be logged in
-        * must have admin or user_delete role
-            * errors when not
-        * must delete all user_attributes too
-        * user must be left in system with only username and null password, and "deleted" user type
-    * update users
-        * must be logged in
-        * must require required attributes
-            * cannot set required attribute to empty
-        * must reject when invalid attributes
-            * invalid, because not on type
-            * invalid, because wrong type
-
-Order of development:
-
-The order of this app's development shall proceed in the form of a story.
-
-When you set a new tenant up, you manually add a tenants row, account_types row, and an accounts
-row to the database with is_admin set to 1.
-
-That's all that's needed to exercise all of the rest of the functionality of the app.
-
-Therefore, I want my full integration test to start with those three rows, and then proceed to
-exercise the entire app by doing the following, which is also the order in which I will 
-develop the app:
-
-* login
-* create user
-* create space
-* get users GET /accounts?query='attribute_name (like, is, in) (value/s) (and/or), etc.
-* get spaces GET /spaces?query='something'
-* add user to space PUT /accounts/<account_id>/spaces/<space_id>
-* get spaces (belonging to user) GET /accounts/<id>/spaces
-* create post POST /spaces/<space_id>/posts
-* create reactions POST /posts/<post_id>/reactions
-* get posts GET /spaces/<space_id>/posts
-
-

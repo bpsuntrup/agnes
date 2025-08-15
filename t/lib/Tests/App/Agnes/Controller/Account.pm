@@ -9,24 +9,9 @@ use Tests::Utils::TestData;
 use base 'Tests::Utils::CommonBase';
 use Test::More;
 use Test::Mojo;
-use DBI;
 use App::Agnes::Config;
 use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
-
-#sub get_accounts :Tests {
-#    my $t = Test::Mojo->new('App::Agnes');
-#    $t->app->log->level('fatal');
-#    $t->get_ok('/accounts')->status_is(401, "Sad path get accounts");
-#
-#    $t->post_ok('/login' => form => {
-#        username => "mary",
-#        password => "pass1",
-#    })->status_is(302)
-#      ->header_like('Set-Cookie' => qr/mojolicious=/, 'got session cookie');
-#    $t->get_ok('/accounts')->status_is(200)
-#                        ->json_has('/data/0/username', 'can get a username');
-#}
 
 sub create_account_sad : Tests {
     my $self = shift;
