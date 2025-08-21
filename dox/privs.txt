@@ -2,4 +2,7 @@ privs are stored in table permissions
 
 * CREATE_USER
     * allows a user to create a user
-    * gates the route POST /api/v1/users
+    * gates the route POST /api/rest/v1/accounts
+* CREATE_TOP_LEVEL_SPACE
+    * allows a user to create a space with no parent space
+    * gates route to POST /api/rest/v1/spaces

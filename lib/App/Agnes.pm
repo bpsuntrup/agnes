@@ -91,11 +91,13 @@ sub startup {
     $r->post('/api/v1/login')->to('login#login_api');
 
     $auth->get('/login')->to('login#login_ok');
-    $restv1->post('/account')->to('account#create_account');
+    $restv1->post('/account')->to('account#create_account'); # TODO: change to accounts
     $restv1->get('/accounts')->to('account#get_accounts');
     $restv1->get('/account/:account_id')->to('account#get_account');
     $restv1->put('/account/:account_id')->to('account#update_account');
     $restv1->delete('/account/:account_id')->to('account#deactivate_account');
+
+    $restv1->post('/spaces')->to('space#create_space');
 }
 
 

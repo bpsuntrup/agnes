@@ -36,7 +36,7 @@ sub create_space : Tests {
         visibility => 'public',
         name => "John's Space",
     })->status_is(403)
-      ->json_is('/err', 'ENOTAUTORIZED', 'Not authorized to create top level space');
+      ->json_is('/err', 'ENOTAUTHORIZED', 'Not authorized to create top level space');
 
     ###########################################################################
     ############ 2.) create works for non-admin privileged user ###############
