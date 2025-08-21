@@ -12,6 +12,10 @@ sub create_space {
     my $current_account = $params{current_account};
     my $space = $params{space};
 
+    if (!$space) {
+        return BizResult->new(err => 'EBADREQUEST', msg => 'Bad request. See docs.');
+    }
+
 
     unless($current_account->has_permission('CREATE_TOP_LEVEL_SPACE')) {
         return BizResult->new(
@@ -25,3 +29,31 @@ sub create_space {
 }
 
 1;
+
+__END__
+
+=pod
+=head1 NAME
+App::Agnes::Biz::Space - CRUD method on Agnes Spaces
+
+=head1 SYNOPSIS
+
+    use aliased 'App::Agnes::Biz::Space' => 'Biz';
+
+    $res = $agnes->create_space(current_account => $ca, space => $space);
+
+    if ($res->err) {
+        # Handle error, throw it or return HTTP code
+    }
+    my $space = $res->res->{space};
+    ...
+
+=head1 DESCRIPTION
+
+Handles CRUD operations on spaces
+
+=head1 METHODS
+
+=head2 create_space
+
+=cut

@@ -19,6 +19,7 @@ sub create_space : Tests {
 
     # Summary:
     # 1.) create fails for non-admin with no privileges
+    # 1.5) create fails with bogus data
     # 2.) create works for non-admin privileged user
     # 3.) creator is owner
 
@@ -33,12 +34,15 @@ sub create_space : Tests {
     })->status_is(302, "log in with unprivileged user");
 
     $t->post_ok('/api/rest/v1/spaces', json => {
-        visibility => 'public',
-        name => "John's Space",
+        space => {
+            visibility => 'public',
+            name => "John's Space",
+        }
     })->status_is(403)
       ->json_is('/err', 'ENOTAUTHORIZED', 'Not authorized to create top level space');
 
     ###########################################################################
+    ############ 1.5.) create fails with bogus data             ###############
     ############ 2.) create works for non-admin privileged user ###############
     ############ 3.) creator is owner                           ###############
     ###########################################################################
@@ -49,6 +53,15 @@ sub create_space : Tests {
         password => "pass2",
         tenant_id => $self->tenant_id(),
     })->status_is(302, "log in with unprivileged user");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        bogus => {
+            visibility => 'public',
+            name => "Joe's Space",
+        }
+    })->status_is(400)
+      ->json_is('/err', 'EBADREQUEST')
+      ->json_has('/msg', 'has descriptive message on bad data');
 
     $t->post_ok('/api/rest/v1/spaces', json => {
         space => {
