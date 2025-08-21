@@ -21,7 +21,7 @@ sub create_space {
         );
     }
 
-    return BizResult->new( );
+    return BizResult->new(res => { space => $space } );
 }
 
 1;

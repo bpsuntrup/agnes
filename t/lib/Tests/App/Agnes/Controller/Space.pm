@@ -51,8 +51,10 @@ sub create_space : Tests {
     })->status_is(302, "log in with unprivileged user");
 
     $t->post_ok('/api/rest/v1/spaces', json => {
-        visibility => 'public',
-        name => "Joe's Space",
+        space => {
+            visibility => 'public',
+            name => "Joe's Space",
+        }
     })->status_is(201)
       ->json_hasnt('/err')
       ->json_is('/res/space/visibility', 'public')
@@ -99,25 +101,31 @@ sub create_subspace : Tests {
     })->status_is(302, "log in with unprivileged user");
 
     $t->post_ok('/api/rest/v1/spaces', json => {
-        visibility => 'public',
-        name       => "Joe's Space",
-        parent_id  => 'bcfcada6-31de-463c-a02d-b2a5673cea9f'
+        space => {
+            visibility => 'public',
+            name       => "Joe's Space",
+            parent_id  => 'bcfcada6-31de-463c-a02d-b2a5673cea9f'
+        }
     })->status_is(404)
       ->json_hasnt('/res')
       ->json_is('/err', 'ENOMATCHINGID', "Fails for parent space that doesn't exist.");
 
     $t->post_ok('/api/rest/v1/spaces', json => {
-        visibility => 'public',
-        name       => "Joe's Space",
-        parent_id  => 'nonsense-id-that-isnt-there',
+        space => {
+            visibility => 'public',
+            name       => "Joe's Space",
+            parent_id  => 'nonsense-id-that-isnt-there',
+        }
     })->status_is(400, "Delete 400s for bad uuid")
       ->json_hasnt("/res")
       ->json_is("/err", 'EBADUUID', "Create fails for bad UUID");
 
     $t->post_ok('/api/rest/v1/spaces', json => {
-        visibility => 'public',
-        name => "Joe's Space",
-        parent_id => $parent_id,
+        space => {
+            visibility => 'public',
+            name => "Joe's Space",
+            parent_id => $parent_id,
+        }
     })->status_is(201)
       ->json_hasnt('/err')
       ->json_is('/res/space/visibility', 'public')
@@ -141,9 +149,11 @@ sub create_subspace : Tests {
     #       does not have visibiliity of
     $t = Test::Mojo->new('App::Agnes');
     $t->post_ok('/login' => form => {
-        username => "john",
-        password => "pass3",
-        tenant_id => $self->tenant_id(),
+        space => {
+            username => "john",
+            password => "pass3",
+            tenant_id => $self->tenant_id(),
+        }
     })->status_is(302, "log in with unprivileged user");
 
     $t->post_ok('/api/rest/v1/spaces', json => {
@@ -154,9 +164,11 @@ sub create_subspace : Tests {
       ->json_is('/err', 'ENOTAUTORIZED', 'Not authorized to create subspace');
 
     $t->post_ok('/api/rest/v1/spaces', json => {
-        parent_id => $parent_invisible_id,
-        visibility => 'public',
-        name => "John's Space",
+        space => {
+            parent_id => $parent_invisible_id,
+            visibility => 'public',
+            name => "John's Space",
+        }
     })->status_is(404)
       ->json_hasnt('/res')
       ->json_is('/err', 'ENOMATCHINGID', 'invisible spaces give same error as nonexistant ones');
