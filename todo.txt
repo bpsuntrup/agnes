@@ -166,4 +166,16 @@ develop the app:
 * create reactions POST /posts/<post_id>/reactions
 * get posts GET /spaces/<space_id>/posts
 
+Furthermore, I should really focus on only building the happy path first. Once the happy path is done,
+I will have something that can be demoed, and something that the front-end can be built on.
+
+I need to add failing tests for the sad path for each route as a reminder to go back and harden up
+every route.
+
+I need to pivot to starting to test Biz class methods. I will start with all of the methods
+needed to actually do a full integration test run (add user, create role with privs, add role to user,
+create space, add user to space, create space role with privs, add space role to user)
+but test all of these only on the happy path and only the biz class. Then use these biz methods
+to set up test cases in other tests. Then build a whole HOUSE OF CARDS with just happy path tests!
+
 

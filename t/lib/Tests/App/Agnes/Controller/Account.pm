@@ -505,6 +505,16 @@ sub update_account : Tests {
     is($john->displayname, "Buzz Suntrup", "User has not changed.");
 }
 
+sub get_accounts_happy :Tests {
+    local $TODO = "This isn't implemented yet";
+    ok(0, "Need to add get_accounts_happy tests");
+}
+
+sub get_accounts_sad :Tests {
+    local $TODO = "This isn't implemented yet";
+    ok(0, "Need to add get_accounts_sad tests");
+}
+
 
 
 # * read users

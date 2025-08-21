@@ -14,7 +14,154 @@ use aliased 'App::Agnes::Model';
 use Mojo::JSON qw/to_json/;
 
 sub create_space : Tests {
-    ok(1, "running test");
+    my $self = shift;
+    my $t;
+
+    # Summary:
+    # 1.) create fails for non-admin with no privileges
+    # 2.) create works for non-admin privileged user
+    # 3.) creator is owner
+
+    ###########################################################################
+    ############ 1.) create fails for non-admin with no privileges ############
+    ###########################################################################
+    $t = Test::Mojo->new('App::Agnes');
+    $t->post_ok('/login' => form => {
+        username => "john",
+        password => "pass3",
+        tenant_id => $self->tenant_id(),
+    })->status_is(302, "log in with unprivileged user");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        visibility => 'public',
+        name => "John's Space",
+    })->status_is(403)
+      ->json_is('/err', 'ENOTAUTORIZED', 'Not authorized to create top level space');
+
+    ###########################################################################
+    ############ 2.) create works for non-admin privileged user ###############
+    ############ 3.) creator is owner                           ###############
+    ###########################################################################
+    $t = Test::Mojo->new('App::Agnes');
+    my $joe = Model->rs('Account')->find({username => 'joe', tenant_id => $self->tenant_id });
+    $t->post_ok('/login' => form => { # TODO: add privs for joe
+        username => "joe",
+        password => "pass2",
+        tenant_id => $self->tenant_id(),
+    })->status_is(302, "log in with unprivileged user");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        visibility => 'public',
+        name => "Joe's Space",
+    })->status_is(201)
+      ->json_hasnt('/err')
+      ->json_is('/res/space/visibility', 'public')
+      ->json_is('/res/space/name', "Joe's Space")
+      ->json_is('/res/space/owner_id', $joe->account_id, "Creator is also owner")
+      ->json_has('/res/space/space_id')
+      ->json_has('/res/space/icon')
+      ->json_has('/res/space/subspaces');
+
+    my $oid = Model->rs('Space')->search({ name => "Joe's Space"})->first->owner_id;
+    is($oid, $joe->account_id, "Creator is also owner, but in database, not response.");
+
+}
+
+sub create_subspace : Tests {
+    my $self = shift;
+    my $t;
+    my $parent = Model->rs('Space')->search({ name => 'top_level_demo_space' })->first;
+    my $parent_id = $parent->space_id;
+    my $parent_invisible = Model->rs('Space')->search({
+        name => 'top_level_demo_space_invisible'
+    })->first;
+    my $parent_invisible_id = $parent_invisible->space_id;
+    my $joe = Model->rs('Account')->find({username => 'joe', tenant_id => $self->tenant_id });
+
+    # Summary:
+    # 2.) create fails for parent space that doesn't exist and bad UUIDs
+    # 4.) create works for non-admin privileged user
+    # 1.) create fails for non-admin with no privileges
+    # 3.) create does not give visibility information to any user even on fail
+    #     As in, you get same error for attempting to create subspace with
+    #     a parent that doesn't exist as a parent that is invisible to you
+
+    ###########################################################################
+    ############ 2.) create fails for parent space that doesn't exist #########
+    ############     and for bad uuids                                #########
+    ############ 4.) create works for non-admin privileged user       #########
+    ###########################################################################
+    $t = Test::Mojo->new('App::Agnes');
+    $t->post_ok('/login' => form => { # TODO: add privs for joe
+        username => "joe",
+        password => "pass2",
+        tenant_id => $self->tenant_id(),
+    })->status_is(302, "log in with unprivileged user");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        visibility => 'public',
+        name       => "Joe's Space",
+        parent_id  => 'bcfcada6-31de-463c-a02d-b2a5673cea9f'
+    })->status_is(404)
+      ->json_hasnt('/res')
+      ->json_is('/err', 'ENOMATCHINGID', "Fails for parent space that doesn't exist.");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        visibility => 'public',
+        name       => "Joe's Space",
+        parent_id  => 'nonsense-id-that-isnt-there',
+    })->status_is(400, "Delete 400s for bad uuid")
+      ->json_hasnt("/res")
+      ->json_is("/err", 'EBADUUID', "Create fails for bad UUID");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        visibility => 'public',
+        name => "Joe's Space",
+        parent_id => $parent_id,
+    })->status_is(201)
+      ->json_hasnt('/err')
+      ->json_is('/res/space/visibility', 'public')
+      ->json_is('/res/space/name', "Joe's Space")
+      ->json_is('/res/space/owner_id', $joe->account_id, "Creator is also owner")
+      ->json_has('/res/space/space_id')
+      ->json_has('/res/space/icon')
+      ->json_has('/res/space/subspaces')
+      ->json_is('/res/space/parent_id', $parent_id);
+
+    ###########################################################################
+    ############ 1.) create fails for non-admin with no privileges            #
+    ############ 3.) create does not give visibility information to any user  #
+    ############     even on fail. As in, you get same error for attempting   #
+    ############     to create subspace with a parent that doesn't exist as a #
+    ############     parent that is invisible to you                          #
+    ###########################################################################
+    # TODO: create top_level_demo_space, add john as member, but not with privs
+    #       joe should own the space
+    # TODO: create another space with joe as owner that john isn't added to, and
+    #       does not have visibiliity of
+    $t = Test::Mojo->new('App::Agnes');
+    $t->post_ok('/login' => form => {
+        username => "john",
+        password => "pass3",
+        tenant_id => $self->tenant_id(),
+    })->status_is(302, "log in with unprivileged user");
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        parent_id => $parent_id,
+        visibility => 'public',
+        name => "John's Space",
+    })->status_is(403)
+      ->json_is('/err', 'ENOTAUTORIZED', 'Not authorized to create subspace');
+
+    $t->post_ok('/api/rest/v1/spaces', json => {
+        parent_id => $parent_invisible_id,
+        visibility => 'public',
+        name => "John's Space",
+    })->status_is(404)
+      ->json_hasnt('/res')
+      ->json_is('/err', 'ENOMATCHINGID', 'invisible spaces give same error as nonexistant ones');
+
+
 }
 
 
