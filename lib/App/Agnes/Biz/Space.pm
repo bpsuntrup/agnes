@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'App::Agnes::Biz';
+use aliased 'App::Agnes::Model';
 
 
 sub create_space {
@@ -25,7 +26,22 @@ sub create_space {
         );
     }
 
-    return BizResult->new(res => { space => $space } );
+    # Actually create the space
+
+    my %newspace = (
+        %$space,
+        tenant_id => $current_account->tenant_id,
+        owner_id  => $current_account->account_id,
+    );
+    my $resspace = Model->rs('Space')->create(\%newspace);
+
+    $newspace{space_id} = $resspace->space_id;
+    $newspace{icon} //= '';
+    $newspace{subspaces} //= [];
+
+    #TODO: handle subspaces, robustify tests
+
+    return BizResult->new(res => { space => \%newspace } );
 }
 
 1;
