@@ -97,6 +97,8 @@ sub startup {
     $restv1->put('/account/:account_id')->to('account#update_account');
     $restv1->delete('/account/:account_id')->to('account#deactivate_account');
 
+    $restv1->get('/posts')->to('post#get_posts');
+
     $restv1->post('/spaces')->to('space#create_space');
 }
 

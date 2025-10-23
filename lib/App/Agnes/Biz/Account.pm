@@ -46,7 +46,7 @@ sub create_account {
         $at = Model->rs('AccountType')->find({account_type_id => $account_type_id});
     }
     elsif ($account_type_name) {
-        $at = Model->rs('AccountType')->find({account_type => $account_type_name});
+        $at = Model->rs('AccountType')->find({name => $account_type_name});
     }
     else {
         return BizResult->new(err => 'EBADREQUEST', msg => 'Must include an account_type or account_type_id');
@@ -97,7 +97,7 @@ sub create_account {
         displayname     => $account->{displayname},
         birthdate       => $account->{birthdate},
         email           => $account->{email},
-        account_type_id => $account->{account_type_id},
+        account_type_id => $at->account_type_id,
         tenant_id       => $current_account->tenant_id,
     );
 

@@ -14,6 +14,8 @@ sub login_now {
     my $username = $self->param('username');
     my $password = $self->param('password');
     my $tenant_id = $self->param('tenant_id');
+    # TODO: fail if tenant_id is missing
+    # TODO: fail gracefully if hash fails
 
     my $account = Model->schema->resultset('Account')->find({
         username => $username,

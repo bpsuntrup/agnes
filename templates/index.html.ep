@@ -6,6 +6,7 @@
 <form action="/login" method="POST">
 <input name="username"></input>
 <input name="password"></input>
+<input name="tenant_id" type="hidden" value="bcfcada6-31de-463c-a02d-b2a5673cea9f"></input>
 <button click="submit">submit</button>
 </form>
 </body>

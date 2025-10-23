@@ -15,6 +15,7 @@ requires 'DateTime::Format::Strptime';
 requires 'JSON::Parse';
 requires 'List::Util';
 requires 'Crypt::PBKDF2';
+requires 'JSON';
 
 on 'test' => sub {
   requires 'Test::More';
